@@ -1,4 +1,4 @@
-import { ReactNode, useMemo, useState } from 'react'
+import { MouseEventHandler, ReactNode, useMemo, useState } from 'react'
 
 import './App.css'
 
@@ -81,6 +81,52 @@ function App() {
         && mask[i] !== Mask.Flag
         || mask[i] !== Mask.Transparent
     ), [field, mask]);
+
+  const handleClick: (coord: { x: number, y: number }) => MouseEventHandler<HTMLButtonElement> =
+    ({ x, y }) => (e) => {
+      e.preventDefault();
+      if (win || lose) return;
+      if (mask[y * size + x] === Mask.Transparent) return;
+      const clearing: [number, number][] = [];
+      function clear(x: number, y: number) {
+        if (x >=0 && x < size && y >= 0 && y < size) {
+          if (mask[y * size + x] === Mask.Transparent) return;
+          clearing.push([x, y]);
+        };
+      };
+
+      clear(x, y);
+      while(clearing.length) {
+        const [x, y] = clearing.pop()!!;
+        mask[y * size + x] = Mask.Transparent;
+
+        if (field[y * size + x] !== 0) continue;
+        config.clearRule.map(({ x: xConfig, y: yConfig }) => clear(x + xConfig, y + yConfig));
+      };
+      if (field[y * size + x] === Mine) {
+        mask.forEach((_,i) => mask[i] = Mask.Transparent);
+        setLose(true);
+      }
+      setMask((prev) => [...prev]);
+    }
+
+  const handleMouseDown: (coord: { x: number, y: number }) => MouseEventHandler<HTMLButtonElement> =
+    ({ x, y }) => (e) => {
+      e.preventDefault();
+      if (e.button === 1) {
+        e.stopPropagation();
+        if (win || lose) return;
+        if (mask[y * size + x] === Mask.Transparent) return;
+        if (mask[y * size + x] === Mask.Fill) {
+          mask[y * size + x] = Mask.Flag;
+        } else if (mask[y * size + x] === Mask.Flag) {
+          mask[y * size + x] = Mask.Question;
+        } else if (mask[y * size + x] === Mask.Question) {
+          mask[y * size + x] = Mask.Fill;
+        };
+      }
+      setMask((prev) => [...prev]);
+    }
   
   return (
     <div className="App">
@@ -89,49 +135,13 @@ function App() {
           <div key={y} className="flex" >{dimension.map((_, x) => (
             <button
               key={x}
-              className={`flex justify-center items-center text-white w-8 h-8 ${lose ? 'bg-red-500' : win ? 'bg-amber-500' : 'bg-green-500'} p-0 m-0.5`}
-              onClick={(e) => {
-                e.preventDefault();
-                if (win || lose) return;
-                if (mask[y * size + x] === Mask.Transparent) return;
-                const clearing: [number, number][] = [];
-                function clear(x: number, y: number) {
-                  if (x >=0 && x < size && y >= 0 && y < size) {
-                    if (mask[y * size + x] === Mask.Transparent) return;
-                    clearing.push([x, y]);
-                  };
-                };
-
-                clear(x, y);
-                while(clearing.length) {
-                  const [x, y] = clearing.pop()!!;
-                  mask[y * size + x] = Mask.Transparent;
-
-                  if (field[y * size + x] !== 0) continue;
-                  config.clearRule.map(({ x: xConfig, y: yConfig }) => clear(x + xConfig, y + yConfig));
-                };
-                if (field[y * size + x] === Mine) {
-                  mask.forEach((_,i) => mask[i] = Mask.Transparent);
-                  setLose(true);
-                }
-                setMask((prev) => [...prev]);
-              }}
-              onMouseDown={(e) => {
-                e.preventDefault();
-                if (e.button === 1) {
-                  e.stopPropagation();
-                  if (win || lose) return;
-                  if (mask[y * size + x] === Mask.Transparent) return;
-                  if (mask[y * size + x] === Mask.Fill) {
-                    mask[y * size + x] = Mask.Flag;
-                  } else if (mask[y * size + x] === Mask.Flag) {
-                    mask[y * size + x] = Mask.Question;
-                  } else if (mask[y * size + x] === Mask.Question) {
-                    mask[y * size + x] = Mask.Fill;
-                  };
-                }
-                setMask((prev) => [...prev]);
-              }}
+              className={
+                `flex justify-center items-center text-white w-8 h-8
+                ${(lose ? 'bg-red-500' : win ? 'bg-amber-500' : 'bg-green-500') + ' '}
+                p-0 m-0.5`
+              }
+              onClick={handleClick({ x, y })}
+              onMouseDown={handleMouseDown({ x, y })}
             >{mask[y * size + x] !== Mask.Transparent
               ? viewOfMask[mask[y * size + x]]
               : field[y * size + x] === Mine
