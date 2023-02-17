@@ -5,10 +5,13 @@ type Coord = {
   y: number;
 };
 
-type Config = {
+type Config<FF> = {
   incrementRule: Coord[];
   clearRule: Coord[];
+  fillFunc: FF;
   view: MaskRecord;
+  paletRule: string[];
+  statePaletRule: Record<string, string>;
 };
 
 export type { Coord, Config };

@@ -2,14 +2,14 @@ import { useState } from 'react'
 
 import config from './app.config';
 import useCanWin from './hooks/useCanWin';
+import getRandomInRange from './utils/getRandomInRange';
+import Field from './components/ui/Field';
 import { Mask, Status } from './types/field';
 import { HandleClick, HandleMouseDown } from './types/handlers';
 import { Coord } from './types/common';
-import './App.css'
+import './App.css';
 
 const Mine = -1;
-
-const getRandomInRange = (border: number) => Math.floor(Math.random() * border);
 
 const createMines = (field: number[], mineCount: number, size: number) => {
   const incrementBorder = (x: number, y: number) => {
@@ -95,41 +95,19 @@ const App = () => {
       setMask((prev) => [...prev]);
     };
 
-    const fillField = (coord: Coord) => () => {
-      const { x, y } = coord;
-      return (
-        mask[y * size + x] !== Mask.TRANSPARENT
-          ? config.view[mask[y * size + x]]
-          : field[y * size + x] === Mine
-            ? '💣'
-            : field[y * size + x]
-      );
-    };
+  const slotProps = {
+    onClick: handleClick,
+    onMouseDown: handleMouseDown,
+    fillField: config.fillFunc,
+    status,
+  };
+
+  const context = { mask, field, size, target: Mine };
   
   return (
     <div className="App">
-      <div className='max-w-xs m-auto'>
-        {dimension.map((_, y) => (
-          <div key={y} className="flex">{dimension.map((_, x) => (
-            <button
-              key={x}
-              className={
-                `flex justify-center items-center text-white w-8 h-8
-                ${(status === Status.LOSE
-                  ? 'bg-red-500'
-                  : status === Status.WIN
-                    ? 'bg-amber-500'
-                    : 'bg-green-500'
-                ) + ' '}
-                p-0 m-0.5`
-              }
-              onClick={handleClick({ x, y })}
-              onMouseDown={handleMouseDown({ x, y })}
-            >{fillField({ x, y })()}</button>
-          ))}</div>
-        ))}
-      </div>
-      <div>{status}</div>
+      <Field dimension={dimension} slotProps={slotProps} ctx={context} />
+      <h3 className="text-xl uppercase">{status}</h3>
     </div>
   )
 }
