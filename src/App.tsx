@@ -1,25 +1,9 @@
-import { MouseEventHandler, ReactNode, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 
+import config from './app.config';
+import { Mask } from './types/field';
+import { HandleClick, HandleMouseDown } from './types/handlers';
 import './App.css'
-
-const config = {
-  incrementRule: [
-    { x: 1, y: 0 },
-    { x: -1, y: 0 },
-    { x: 0, y: 1 },
-    { x: 0, y: -1 },
-    { x: 1, y: -1 },
-    { x: -1, y: -1 },
-    { x: 1, y: 1 },
-    { x: -1, y: 1 },
-  ],
-  clearRule: [
-    { x: 1, y: 0 },
-    { x: -1, y: 0 },
-    { x: 0, y: 1 },
-    { x: 0, y: -1 },
-  ],
-}
 
 const Mine = -1;
 
@@ -55,43 +39,29 @@ const createField = (size: number): number[] => {
   return field;
 }
 
-enum Mask {
-  Transparent,
-  Fill,
-  Flag,
-  Question,
-};
-
-const viewOfMask: Record<Mask, ReactNode> = {
-  [Mask.Transparent]: null,
-  [Mask.Fill]: '🌿',
-  [Mask.Flag]: '🚩',
-  [Mask.Question]: '❓',
-};
-
 const App = () => {
   const size = 10;
   const dimension = new Array(size).fill(null);
   const [lose, setLose] = useState(false);
   const [field, setField] = useState(() => createField(size));
-  const [mask, setMask] = useState<Mask[]>(() => new Array(size * size).fill(Mask.Fill));
+  const [mask, setMask] = useState<Mask[]>(() => new Array(size * size).fill(Mask.FILL));
   const win = useMemo(() =>
     !field.some(
       (f, i) => f === Mine
-        && mask[i] !== Mask.Flag
-        || mask[i] !== Mask.Transparent
+        && mask[i] !== Mask.FLAG
+        || mask[i] !== Mask.TRANSPARENT
     ), [field, mask]);
 
-  const handleClick: (coord: { x: number, y: number }) => MouseEventHandler<HTMLButtonElement> =
+  const handleClick: HandleClick =
     ({ x, y }) => (e) => {
       e.preventDefault();
       if (win || lose) return;
-      if (mask[y * size + x] === Mask.Transparent) return;
+      if (mask[y * size + x] === Mask.TRANSPARENT) return;
       const clearing: [number, number][] = [];
 
       const clear = (x: number, y: number) => {
         if (x >=0 && x < size && y >= 0 && y < size) {
-          if (mask[y * size + x] === Mask.Transparent) return;
+          if (mask[y * size + x] === Mask.TRANSPARENT) return;
           clearing.push([x, y]);
         };
       };
@@ -99,31 +69,31 @@ const App = () => {
       clear(x, y);
       while(clearing.length) {
         const [x, y] = clearing.pop()!!;
-        mask[y * size + x] = Mask.Transparent;
+        mask[y * size + x] = Mask.TRANSPARENT;
 
         if (field[y * size + x] !== 0) continue;
         config.clearRule.map(({ x: xConfig, y: yConfig }) => clear(x + xConfig, y + yConfig));
       };
       if (field[y * size + x] === Mine) {
-        mask.forEach((_,i) => mask[i] = Mask.Transparent);
+        mask.forEach((_,i) => mask[i] = Mask.TRANSPARENT);
         setLose(true);
       }
       setMask((prev) => [...prev]);
     }
 
-  const handleMouseDown: (coord: { x: number, y: number }) => MouseEventHandler<HTMLButtonElement> =
+  const handleMouseDown: HandleMouseDown =
     ({ x, y }) => (e) => {
       e.preventDefault();
       if (e.button === 1) {
         e.stopPropagation();
         if (win || lose) return;
-        if (mask[y * size + x] === Mask.Transparent) return;
-        if (mask[y * size + x] === Mask.Fill) {
-          mask[y * size + x] = Mask.Flag;
-        } else if (mask[y * size + x] === Mask.Flag) {
-          mask[y * size + x] = Mask.Question;
-        } else if (mask[y * size + x] === Mask.Question) {
-          mask[y * size + x] = Mask.Fill;
+        if (mask[y * size + x] === Mask.TRANSPARENT) return;
+        if (mask[y * size + x] === Mask.FILL) {
+          mask[y * size + x] = Mask.FLAG;
+        } else if (mask[y * size + x] === Mask.FLAG) {
+          mask[y * size + x] = Mask.QUESTION;
+        } else if (mask[y * size + x] === Mask.QUESTION) {
+          mask[y * size + x] = Mask.FILL;
         };
       }
       setMask((prev) => [...prev]);
@@ -143,8 +113,8 @@ const App = () => {
               }
               onClick={handleClick({ x, y })}
               onMouseDown={handleMouseDown({ x, y })}
-            >{mask[y * size + x] !== Mask.Transparent
-              ? viewOfMask[mask[y * size + x]]
+            >{mask[y * size + x] !== Mask.TRANSPARENT
+              ? config.view[mask[y * size + x]]
               : field[y * size + x] === Mine
                 ? '💣'
                 : field[y * size + x]
