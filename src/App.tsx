@@ -84,21 +84,12 @@ function App() {
   
   return (
     <div className="App">
-      <div>
+      <div className='max-w-xs m-auto'>
         {dimension.map((_, y) => (
-          <div key={y} style={{ display: 'flex' }}>{dimension.map((_, x) => (
+          <div key={y} className="flex" >{dimension.map((_, x) => (
             <button
               key={x}
-              style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                width: 24,
-                height: 24,
-                backgroundColor:lose ? '#FAA' : win ? '#FFB' : '#beb',
-                padding: 0,
-                margin: 2,
-              }}
+              className={`flex justify-center items-center text-white w-8 h-8 ${lose ? 'bg-red-500' : win ? 'bg-amber-500' : 'bg-green-500'} p-0 m-0.5`}
               onClick={(e) => {
                 e.preventDefault();
                 if (win || lose) return;
