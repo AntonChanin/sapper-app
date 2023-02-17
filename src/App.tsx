@@ -23,12 +23,12 @@ const config = {
 
 const Mine = -1;
 
-function getRandomInRange(border: number) {
+const getRandomInRange = (border: number) => {
   return Math.floor(Math.random() * border)
 }
 
-function createMines(field: number[], mineCount: number, size: number) {
-  function incrementBorder(x: number, y: number) {
+const createMines = (field: number[], mineCount: number, size: number) => {
+  const incrementBorder = (x: number, y: number) => {
     if (x >=0 && x < size && y >= 0 && y < size) {
       if (field[y * size + x] === Mine) return;
       field[y * size  + x] += 1;
@@ -49,7 +49,7 @@ function createMines(field: number[], mineCount: number, size: number) {
   }
 }
 
-function createField(size: number): number[] {
+const createField = (size: number): number[] => {
   const field: number[] = new Array(size * size).fill(0);
   createMines(field, 10, 10);
   return field;
@@ -69,7 +69,7 @@ const viewOfMask: Record<Mask, ReactNode> = {
   [Mask.Question]: '❓',
 };
 
-function App() {
+const App = () => {
   const size = 10;
   const dimension = new Array(size).fill(null);
   const [lose, setLose] = useState(false);
@@ -88,7 +88,8 @@ function App() {
       if (win || lose) return;
       if (mask[y * size + x] === Mask.Transparent) return;
       const clearing: [number, number][] = [];
-      function clear(x: number, y: number) {
+
+      const clear = (x: number, y: number) => {
         if (x >=0 && x < size && y >= 0 && y < size) {
           if (mask[y * size + x] === Mask.Transparent) return;
           clearing.push([x, y]);
@@ -132,7 +133,7 @@ function App() {
     <div className="App">
       <div className='max-w-xs m-auto'>
         {dimension.map((_, y) => (
-          <div key={y} className="flex" >{dimension.map((_, x) => (
+          <div key={y} className="flex">{dimension.map((_, x) => (
             <button
               key={x}
               className={
