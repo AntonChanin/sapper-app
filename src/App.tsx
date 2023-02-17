@@ -1,8 +1,9 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import config from './app.config';
-import { Mask } from './types/field';
+import { Mask, Status } from './types/field';
 import { HandleClick, HandleMouseDown } from './types/handlers';
+import { Coord } from './types/common';
 import './App.css'
 
 const Mine = -1;
@@ -42,33 +43,38 @@ const createField = (size: number): number[] => {
 const App = () => {
   const size = 10;
   const dimension = new Array(size).fill(null);
-  const [lose, setLose] = useState(false);
+  const [status, setStatus] = useState(Status.NONE);
   const [field, setField] = useState(() => createField(size));
   const [mask, setMask] = useState<Mask[]>(() => new Array(size * size).fill(Mask.FILL));
-  const win = useMemo(() =>
-    !field.some(
+
+  useEffect(() => {
+   if (field.some(
       (f, i) => f === Mine
-        && mask[i] !== Mask.FLAG
-        || mask[i] !== Mask.TRANSPARENT
-    ), [field, mask]);
+        && mask[i] === Mask.FLAG
+        && mask[i] !== Mask.TRANSPARENT
+    )) {
+      setStatus(Status.WIN);
+    };
+  }, [field, mask, status],
+  );
 
   const handleClick: HandleClick =
     ({ x, y }) => (e) => {
       e.preventDefault();
-      if (win || lose) return;
+      if (status !== Status.NONE) return;
       if (mask[y * size + x] === Mask.TRANSPARENT) return;
-      const clearing: [number, number][] = [];
+      const clearing:Coord[] = [];
 
       const clear = (x: number, y: number) => {
         if (x >=0 && x < size && y >= 0 && y < size) {
           if (mask[y * size + x] === Mask.TRANSPARENT) return;
-          clearing.push([x, y]);
+          clearing.push({ x, y });
         };
       };
 
       clear(x, y);
       while(clearing.length) {
-        const [x, y] = clearing.pop()!!;
+        const { x, y } = clearing.pop()!!;
         mask[y * size + x] = Mask.TRANSPARENT;
 
         if (field[y * size + x] !== 0) continue;
@@ -76,7 +82,7 @@ const App = () => {
       };
       if (field[y * size + x] === Mine) {
         mask.forEach((_,i) => mask[i] = Mask.TRANSPARENT);
-        setLose(true);
+        setStatus(Status.LOSE);
       }
       setMask((prev) => [...prev]);
     }
@@ -86,7 +92,7 @@ const App = () => {
       e.preventDefault();
       if (e.button === 1) {
         e.stopPropagation();
-        if (win || lose) return;
+        if (status !== Status.NONE) return;
         if (mask[y * size + x] === Mask.TRANSPARENT) return;
         if (mask[y * size + x] === Mask.FILL) {
           mask[y * size + x] = Mask.FLAG;
@@ -98,6 +104,17 @@ const App = () => {
       }
       setMask((prev) => [...prev]);
     }
+
+    const fillField = (coord: Coord) => () => {
+      const { x, y } = coord;
+      return (
+        mask[y * size + x] !== Mask.TRANSPARENT
+          ? config.view[mask[y * size + x]]
+          : field[y * size + x] === Mine
+            ? '💣'
+            : field[y * size + x]
+      );
+    }
   
   return (
     <div className="App">
@@ -108,20 +125,16 @@ const App = () => {
               key={x}
               className={
                 `flex justify-center items-center text-white w-8 h-8
-                ${(lose ? 'bg-red-500' : win ? 'bg-amber-500' : 'bg-green-500') + ' '}
+                ${(status === Status.LOSE ? 'bg-red-500' : status === Status.WIN ? 'bg-amber-500' : 'bg-green-500') + ' '}
                 p-0 m-0.5`
               }
               onClick={handleClick({ x, y })}
               onMouseDown={handleMouseDown({ x, y })}
-            >{mask[y * size + x] !== Mask.TRANSPARENT
-              ? config.view[mask[y * size + x]]
-              : field[y * size + x] === Mine
-                ? '💣'
-                : field[y * size + x]
-            }</button>
+            >{fillField({ x, y })()}</button>
           ))}</div>
         ))}
       </div>
+      <div>{status}</div>
     </div>
   )
 }
