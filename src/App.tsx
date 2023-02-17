@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import config from './app.config';
+import useCanWin from './hooks/useCanWin';
 import { Mask, Status } from './types/field';
 import { HandleClick, HandleMouseDown } from './types/handlers';
 import { Coord } from './types/common';
@@ -8,9 +9,7 @@ import './App.css'
 
 const Mine = -1;
 
-const getRandomInRange = (border: number) => {
-  return Math.floor(Math.random() * border)
-}
+const getRandomInRange = (border: number) => Math.floor(Math.random() * border);
 
 const createMines = (field: number[], mineCount: number, size: number) => {
   const incrementBorder = (x: number, y: number) => {
@@ -47,16 +46,7 @@ const App = () => {
   const [field, setField] = useState(() => createField(size));
   const [mask, setMask] = useState<Mask[]>(() => new Array(size * size).fill(Mask.FILL));
 
-  useEffect(() => {
-   if (field.some(
-      (f, i) => f === Mine
-        && mask[i] === Mask.FLAG
-        && mask[i] !== Mask.TRANSPARENT
-    )) {
-      setStatus(Status.WIN);
-    };
-  }, [field, mask, status],
-  );
+  useCanWin({ field, target: Mine, mask, callback: () => setStatus(Status.WIN) });
 
   const handleClick: HandleClick =
     ({ x, y }) => (e) => {
@@ -85,7 +75,7 @@ const App = () => {
         setStatus(Status.LOSE);
       }
       setMask((prev) => [...prev]);
-    }
+    };
 
   const handleMouseDown: HandleMouseDown =
     ({ x, y }) => (e) => {
@@ -103,7 +93,7 @@ const App = () => {
         };
       }
       setMask((prev) => [...prev]);
-    }
+    };
 
     const fillField = (coord: Coord) => () => {
       const { x, y } = coord;
@@ -114,7 +104,7 @@ const App = () => {
             ? '💣'
             : field[y * size + x]
       );
-    }
+    };
   
   return (
     <div className="App">
