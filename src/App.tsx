@@ -125,7 +125,12 @@ const App = () => {
               key={x}
               className={
                 `flex justify-center items-center text-white w-8 h-8
-                ${(status === Status.LOSE ? 'bg-red-500' : status === Status.WIN ? 'bg-amber-500' : 'bg-green-500') + ' '}
+                ${status === Status.LOSE
+                  ? 'bg-red-500'
+                  : status === Status.WIN
+                    ? 'bg-amber-500'
+                    : 'bg-green-500'
+                  + ' '}
                 p-0 m-0.5`
               }
               onClick={handleClick({ x, y })}
