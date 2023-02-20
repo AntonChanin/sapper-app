@@ -6,6 +6,7 @@ import { HandleClick, HandleMouseDown } from '../../types/handlers';
 
 type Props = {
   dimension: number[];
+  difficulty: string;
   slotProps: FieldSlotProps<HandleClick, HandleMouseDown, FillCallback>;
   ctx: FillContext;
 };
