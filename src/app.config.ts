@@ -1,5 +1,6 @@
 import { Config } from './types/common';
 import { FillCallback, Mask } from './types/field';
+import { default as timerRender } from './utils/render';
 
 const config: Config<FillCallback> = {
   incrementRule: [
@@ -49,7 +50,8 @@ const config: Config<FillCallback> = {
     [Mask.FILL]: '🌿',
     [Mask.FLAG]: '🚩',
     [Mask.QUESTION]: '❓',
-  }
+  },
+  timerRender,
 };
 
 export default config;

@@ -109,6 +109,7 @@ const App = () => {
     <div className="App">
       <Field dimension={dimension} slotProps={slotProps} ctx={context} />
       <Title value={status} />
+      {config.timerRender({ initialMinute: 0, initialSeconds: 0, isStop: status !== Status.NONE })}
     </div>
   )
 }
