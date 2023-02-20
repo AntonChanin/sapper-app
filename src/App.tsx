@@ -34,17 +34,17 @@ const createMines = (field: number[], mineCount: number, size: number) => {
   }
 }
 
-const createField = (size: number): number[] => {
+const createField = (size: number, mineCount: number): number[] => {
   const field: number[] = new Array(size * size).fill(0);
-  createMines(field, 10, 10);
+  createMines(field, mineCount, size);
   return field;
 }
 
 const App = () => {
-  const size = 10;
+  const { size: { x: size }, mineCount } = config.difficultyRule['medium'];
   const dimension = new Array(size).fill(null);
   const [status, setStatus] = useState(Status.NONE);
-  const [field, setField] = useState(() => createField(size));
+  const [field, setField] = useState(() => createField(size, mineCount));
   const [mask, setMask] = useState<Mask[]>(() => new Array(size * size).fill(Mask.FILL));
 
   useCanWin({ field, target: Mine, mask, callback: () => setStatus(Status.WIN) });

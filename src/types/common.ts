@@ -5,11 +5,18 @@ type Coord = {
   y: number;
 };
 
+type DifficultySetting = {
+  size: Coord;
+  mineCount: number;
+  slotScale: string;
+};
+
 type Config<FF> = {
   incrementRule: Coord[];
   clearRule: Coord[];
   fillFunc: FF;
   view: MaskRecord;
+  difficultyRule: Record<string, DifficultySetting>;
   fontPaletRule: string[];
   fillPaletRule: string[];
   statePaletRule: Record<string, string>;

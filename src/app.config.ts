@@ -18,7 +18,24 @@ const config: Config<FillCallback> = {
     { x: -1, y: 0 },
     { x: 0, y: 1 },
     { x: 0, y: -1 },
-  ], 
+  ],
+  difficultyRule: {
+    low: {
+      size: { x: 8, y: 8 },
+      mineCount: 10,
+      slotScale: 'w-10 h-10 min-w-[2.5rem] min-h-[2.5rem] m-0.5',
+    },
+    medium: {
+      size: { x: 16, y: 16 },
+      mineCount: 40,
+      slotScale: 'w-[1.25rem] h-[1.25rem] min-w-[1.25rem] min-h-[1.25rem] text-sm m-0.25',
+    },
+    hard: {
+      size: { x: 32, y: 16 },
+      mineCount: 100,
+      slotScale: 'w-[0.62rem] h-[0.62rem] min-w-[0.62rem] min-h-[0.62rem] text-xs m-0.1',
+    },
+  },
   fillFunc: (coord, ctx) => {
     const { x, y } = coord;
     const { mask, field, size, target } = ctx;
@@ -41,6 +58,7 @@ const config: Config<FillCallback> = {
     'text-black',
   ],
   fillPaletRule: [
+    'bg-teal-500',
     'bg-blue-500',
     'bg-green-500',
     'bg-red-500',
