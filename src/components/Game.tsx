@@ -8,7 +8,6 @@ import { Coord } from '../types/common';
 import { Status, Mask } from '../types/field';
 import { HandleClick, HandleMouseDown } from '../types/handlers';
 import getRandomInRange from '../utils/getRandomInRange';
-import Setting from './Setting';
 import Field from './ui/Field';
 import Title from './ui/Title';
 import Button from './ui/Button';
@@ -45,7 +44,7 @@ const createField = (size: number, mineCount: number): number[] => {
 }
 
 const Game: FC = () => {
-  const { difficulty } = SapperStoreInstance;
+  const { difficulty, flagAmmo, changeFlagAmmo } = SapperStoreInstance;
   const { size: { x: size }, mineCount } = config.difficultyRule[difficulty];
   const dimension = new Array(size).fill(null);
   const [status, setStatus] = useState(Status.NONE);
@@ -56,6 +55,7 @@ const Game: FC = () => {
     setField(() => createField(size, mineCount));
     setMask(() => new Array(size * size).fill(Mask.FILL));
     setStatus(Status.NONE);
+    changeFlagAmmo(-flagAmmo + mineCount);
   };
 
   useEffect(() => {
@@ -101,12 +101,14 @@ const Game: FC = () => {
         e.stopPropagation();
         if (status !== Status.NONE) return;
         if (mask[y * size + x] === Mask.TRANSPARENT) return;
-        if (mask[y * size + x] === Mask.FILL) {
+        if (mask[y * size + x] === Mask.FILL && flagAmmo > 0) {
           mask[y * size + x] = Mask.FLAG;
+          changeFlagAmmo(-1);
         } else if (mask[y * size + x] === Mask.FLAG) {
           mask[y * size + x] = Mask.QUESTION;
         } else if (mask[y * size + x] === Mask.QUESTION) {
           mask[y * size + x] = Mask.FILL;
+          changeFlagAmmo(+1);
         };
       }
       setMask((prev) => [...prev]);
@@ -127,6 +129,7 @@ const Game: FC = () => {
       <Field dimension={dimension} difficulty={difficulty} slotProps={slotProps} ctx={context} />
       <div className={createClass(['flex', 'justify-around'])}>
         {config.timerRender({ initialMinute: 0, initialSeconds: 0, isStop: status !== Status.NONE })}
+        <div className={createClass(['flex', 'items-center'])}>Запас флагов: {flagAmmo}</div>
         <Button title={'🔄'} className={`${status !== Status.NONE && 'bg-sky-300'}`} callback={reftesh} />
       </div>
     </div>
