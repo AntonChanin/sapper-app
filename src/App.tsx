@@ -4,6 +4,7 @@ import config from './app.config';
 import useCanWin from './hooks/useCanWin';
 import getRandomInRange from './utils/getRandomInRange';
 import Field from './components/ui/Field';
+import Title from './components/ui/Title';
 import { Mask, Status } from './types/field';
 import { HandleClick, HandleMouseDown } from './types/handlers';
 import { Coord } from './types/common';
@@ -107,7 +108,7 @@ const App = () => {
   return (
     <div className="App">
       <Field dimension={dimension} slotProps={slotProps} ctx={context} />
-      <h3 className="text-xl uppercase">{status}</h3>
+      <Title value={status} />
     </div>
   )
 }
