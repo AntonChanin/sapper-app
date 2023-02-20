@@ -44,9 +44,10 @@ const createField = (size: number, mineCount: number): number[] => {
 }
 
 const Game: FC = () => {
-  const { difficulty, flagAmmo, changeFlagAmmo } = SapperStoreInstance;
+  const { difficulty, flagAmmo, changeFlagAmmo, addLeaderToBoard } = SapperStoreInstance;
   const { size: { x: size }, mineCount } = config.difficultyRule[difficulty];
   const dimension = new Array(size).fill(null);
+  const [currentTime, setCurrentTime] = useState('0');
   const [status, setStatus] = useState(Status.NONE);
   const [field, setField] = useState(() => createField(size, mineCount));
   const [mask, setMask] = useState<Mask[]>(() => new Array(size * size).fill(Mask.FILL));
@@ -62,6 +63,8 @@ const Game: FC = () => {
     reftesh()
     localStorage.setItem('difficulty', difficulty);
   }, [difficulty]);
+
+  useEffect(() => addLeaderToBoard(currentTime), [status === Status.WIN, currentTime]);
 
   useCanWin({ field, target: Mine, mask, callback: () => setStatus(Status.WIN) });
 
@@ -128,7 +131,7 @@ const Game: FC = () => {
       <Title value={status} />
       <Field dimension={dimension} difficulty={difficulty} slotProps={slotProps} ctx={context} />
       <div className={createClass(['flex', 'justify-around'])}>
-        {config.timerRender({ initialMinute: 0, initialSeconds: 0, isStop: status !== Status.NONE })}
+        {config.timerRender({ initialMinute: 0, initialSeconds: 0, isStop: status !== Status.NONE },(props) => setCurrentTime(`${props?.time}`))}
         <div className={createClass(['flex', 'items-center'])}>Запас флагов: {flagAmmo}</div>
         <Button title={'🔄'} className={`${status !== Status.NONE && 'bg-sky-300'}`} callback={reftesh} />
       </div>
