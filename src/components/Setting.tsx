@@ -19,11 +19,11 @@ const Setting: FC = () => {
 
   return (<div className={createClass(['flex', 'flex-col'])}>
     <h2 className={createClass(['text-xl', 'font-bold'])}>Подробности сложнасти</h2>
-    <div className={createClass(['flex', 'flex-row', 'justify-between', 'items-center'])}><b>Размер поля: </b>{x} x {y}</div>
+    <div className={createClass(['flex', 'flex-row', 'justify-between', 'items-center'])}><b>Размер поля: </b>{x} x {x}</div>
     <div className={createClass(['flex', 'flex-row', 'justify-between', 'items-center'])}><b>Число мин: </b>{mineCount}</div>
     <div className={createClass(['flex', 'flex-row', 'justify-between', 'items-center'])}>
       <b>Уровень сложнасти: </b>
-      {difficulty.map((name) => <Button key={uuid()} title={name} callback={updateDifficulty(name)} />)}
+      {difficulty.map((name) => <Button key={uuid()} title={name} className={`${current === name && 'border-double'}`} callback={updateDifficulty(name)} />)}
     </div>
   </div>);
 }

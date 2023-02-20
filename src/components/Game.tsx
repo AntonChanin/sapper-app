@@ -11,6 +11,8 @@ import getRandomInRange from '../utils/getRandomInRange';
 import Setting from './Setting';
 import Field from './ui/Field';
 import Title from './ui/Title';
+import Button from './ui/Button';
+import createClass from '../utils/createClass';
 
 const Mine = -1;
 
@@ -50,9 +52,14 @@ const Game: FC = () => {
   const [field, setField] = useState(() => createField(size, mineCount));
   const [mask, setMask] = useState<Mask[]>(() => new Array(size * size).fill(Mask.FILL));
 
-  useEffect(() => {
+  const reftesh = () => {
     setField(() => createField(size, mineCount));
     setMask(() => new Array(size * size).fill(Mask.FILL));
+    setStatus(Status.NONE);
+  };
+
+  useEffect(() => {
+    reftesh()
     localStorage.setItem('difficulty', difficulty);
   }, [difficulty]);
 
@@ -116,9 +123,12 @@ const Game: FC = () => {
   
   return (
     <div>
-      <Field dimension={dimension} difficulty={difficulty} slotProps={slotProps} ctx={context} />
       <Title value={status} />
-      {config.timerRender({ initialMinute: 0, initialSeconds: 0, isStop: status !== Status.NONE })}
+      <Field dimension={dimension} difficulty={difficulty} slotProps={slotProps} ctx={context} />
+      <div className={createClass(['flex', 'justify-around'])}>
+        {config.timerRender({ initialMinute: 0, initialSeconds: 0, isStop: status !== Status.NONE })}
+        <Button title={'🔄'} className={`${status !== Status.NONE && 'bg-sky-300'}`} callback={reftesh} />
+      </div>
     </div>
   );
 };

@@ -10,12 +10,10 @@ type Props = {
 
 const Button: FC<Props> = (props) => {
   const { callback, title, className = '' } = props;
-  const [isSelect, setIsSelect] = useState(false);
 
   const handleClick: MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();
     callback?.();
-    setIsSelect(true);
   }
 
   return (
@@ -24,9 +22,8 @@ const Button: FC<Props> = (props) => {
         className,
         'p-2',
         'm-2',
-        'border-2 rounded-lg border-indigo-600',
+        'border-4 rounded-lg border-indigo-600',
         'hover:border-indigo-300',
-        isSelect ? 'border-double ' : 'border-solid',
       ])}
       onClick={handleClick}
     >
