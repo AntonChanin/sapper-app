@@ -20,11 +20,13 @@ type Config<FF> = {
   fontPaletRule: string[];
   fillPaletRule: string[];
   statePaletRule: Record<string, string>;
-  timerRender: (props: {
+  timerRender: (
+    props: {
     initialMinute: number;
     initialSeconds: number;
     isStop: boolean;
-  }, callback?: () => void) => JSX.Element,
+    }, 
+    callback?: (props?: Record<string, string | number>) => void) => JSX.Element,
 };
 
 export type { Coord, Config };

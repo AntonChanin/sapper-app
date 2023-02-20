@@ -7,7 +7,7 @@ type Props = {
   initialSeconds? : number;
   isStop?: boolean;
   change?: number;
-  callback?: () => void;
+  callback?: (props?: Record<string, string | number>) => void;
 }
 
 const Timer: FC<Props> = (props) => {
@@ -19,31 +19,31 @@ const Timer: FC<Props> = (props) => {
     let myInterval = setInterval(
     () => {
       if (change < 0) {
-          if (seconds > 0) {
-              setSeconds(seconds + change);
+        if (seconds > 0) {
+          setSeconds(seconds + change);
+        }
+        if (seconds === 0) {
+          if (minutes === 0) {
+            clearInterval(myInterval);
+          } else {
+            setMinutes(minutes + change);
+            setSeconds(59);
           }
-          if (seconds === 0) {
-              if (minutes === 0) {
-              clearInterval(myInterval);
-              callback?.();
-              } else {
-              setMinutes(minutes + change);
-              setSeconds(59);
-              }
-          } 
+        } 
       }
       if (change > 0) {
-          if (seconds < 60) {
-              setSeconds(seconds + change);
-          }
-          if (seconds === 59) {
-              setMinutes(minutes + change);
-              setSeconds(0);
-          }
+        if (seconds < 60) {
+          setSeconds(seconds + change);
+        }
+        if (seconds === 59) {
+          setMinutes(minutes + change);
+          setSeconds(0);
+        }
       }
     }, 1000);
     if (isStop) {
-        clearInterval(myInterval);
+      callback?.({ time: `${minutes * 60 + seconds}` });
+      clearInterval(myInterval);
     }
     return () => {
       clearInterval(myInterval);
