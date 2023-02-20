@@ -9,26 +9,27 @@ type Props = {
     y: number;
     slotProps: FieldSlotProps<HandleClick, HandleMouseDown, FillCallback>;
     ctx: FillContext;
+    difficulty: string;
 };
 
 const FieldRow: FC<Props> = (props) => {
-    const { dimension, y, slotProps, ctx } = props;
-
-    return (
-        <div className="flex">{
-            dimension.map((_, x) => (
-                <FieldSlot
-                    key={x}
-                    {...{
-                        ...slotProps,
-                        onClick: slotProps.onClick({ x, y }),
-                        onMouseDown: slotProps.onMouseDown({ x, y }),
-                        fillField: slotProps.fillField({ x, y }, ctx),
-                    }}
-                />
-            ))
-        }</div>
-    );
+  const { dimension, difficulty, y, slotProps, ctx } = props;
+  return (
+    <div className="flex">{
+      dimension.map((_, x) => (
+        <FieldSlot
+          key={x}
+          {...{
+            ...slotProps,
+            onClick: slotProps.onClick({ x, y }),
+            onMouseDown: slotProps.onMouseDown({ x, y }),
+            fillField: slotProps.fillField({ x, y }, ctx),
+            difficulty,
+          }}
+        />
+      ))
+    }</div>
+  );
 };
 
 export default FieldRow;

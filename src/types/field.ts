@@ -17,10 +17,10 @@ enum Status {
 type MaskRecord = Record<Mask, ReactNode>
 
 type FillContext = {
-    mask: Mask[],
-    field: number[],
-    size: number,
-    target: number,
+    mask: Mask[];
+    field: number[];
+    size: number;
+    target: number;
 };
 
 type FillCallback = (
