@@ -10,7 +10,8 @@ type Config<FF> = {
   clearRule: Coord[];
   fillFunc: FF;
   view: MaskRecord;
-  paletRule: string[];
+  fontPaletRule: string[];
+  fillPaletRule: string[];
   statePaletRule: Record<string, string>;
   timerRender: (props: {
     initialMinute: number;

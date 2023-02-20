@@ -30,12 +30,22 @@ const config: Config<FillCallback> = {
           : field[y * size + x]
     );
   },
-  paletRule: [
+  fontPaletRule: [
+    'text-white',
+    'text-white',
+    'text-white',
+    'text-white',
+    'text-white',
+    'text-white',
+    'text-white',
+    'text-black',
+  ],
+  fillPaletRule: [
     'bg-blue-500',
     'bg-green-500',
     'bg-red-500',
     'bg-blue-900',
-    'bg-teal-500',
+    'bg-orange-800',
     'bg-sky-500',
     'bg-black',
     'bg-white',

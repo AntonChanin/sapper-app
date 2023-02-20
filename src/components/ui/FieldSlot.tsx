@@ -15,13 +15,13 @@ const FieldSlot: FC<Props> = (props) => {
   return (
     <button
       className={
-        `flex justify-center items-center text-white w-8 h-8
+        `flex justify-center items-center ${config.fontPaletRule[Number(fillField)] ?? 'text-white'} w-8 h-8
         ${(
           status === Status.LOSE
             ? config.statePaletRule['lose']
             : status === Status.WIN
               ? config.statePaletRule['win']
-              : Number(fillField) ? config.paletRule[Number(fillField)] : config.statePaletRule['default']
+              : Number(fillField) ? config.fillPaletRule[Number(fillField)] : config.statePaletRule['default']
         ) + ' '}
         p-0 m-0.5`
       }
