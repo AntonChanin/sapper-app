@@ -52,6 +52,8 @@
 
 # Реализация
 
+Демо: https://sensational-paprenjak-b15e67.netlify.app/
+
 ## Стек
 
 * TS
