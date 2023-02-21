@@ -14,7 +14,7 @@ const Field: FC<Props> = (props) => {
   const { dimension } = props;
 
   return (
-      <div className='max-w-xs max-h-[320px] m-auto block overflow-auto w-fit'>
+      <div className='max-w-xs w-[300px] max-h-[320px] m-auto block overflow-auto'>
       {dimension.map((_, y) => (
         <FieldRow key={y} y={y} {...props} />
       ))}
