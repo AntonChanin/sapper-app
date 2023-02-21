@@ -29,9 +29,15 @@ const Setting: FC = () => {
     <div className={createClass(['flex', 'flex-row', 'justify-between', 'items-center'])}><b>Число мин: </b>{mineCount}</div>
     <div className={createClass(['flex', 'flex-row', 'justify-between', 'items-center'])}>
       <b>Уровень сложнасти: </b>
-      {difficulty.map((name) => <Button key={uuid()} title={name} className={`${current === name && 'border-double'}`} callback={updateDifficulty(name)} />)}
+      {difficulty.map((name) => <Button
+        key={uuid()}
+        title={name}
+        className={`${current === name && 'border-double'}`}
+        sound={config.sound['button']}
+        callback={updateDifficulty(name)}
+      />)}
     </div>
-    <Input label={<b>Имя игрока:</b>} className="w-56" value={nickname} callback={updateNickname} />
+    <Input label={<b>Имя игрока:</b>} className="w-56" value={nickname} sound={config.sound['input']} callback={updateNickname} />
   </div>);
 }
 

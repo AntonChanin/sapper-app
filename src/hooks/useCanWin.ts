@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
+import config from '../app.config';
 
 import { Mask } from '../types/field';
+import useSound from './useSound';
 
 type Props = {
   field: number[];
@@ -11,6 +13,7 @@ type Props = {
 
 const useCanWin = (props: Props) => {
   const { field, target, mask, callback } = props;
+  const { applaySound } = useSound(config.sound['win']);
   useEffect(
     () => {
       if (
@@ -25,6 +28,7 @@ const useCanWin = (props: Props) => {
         ).includes(false)
       ) {
         callback();
+        applaySound();
       };
     },
     [field, mask],
