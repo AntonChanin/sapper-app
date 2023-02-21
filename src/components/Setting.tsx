@@ -1,12 +1,12 @@
 import { FC } from 'react';
 import { observer } from 'mobx-react-lite';
 
+import SapperStoreInstance from '../store';
+import Button from './ui/Button';
 import config from '../app.config';
 import createClass from '../utils/createClass';
 import uuid from '../utils/uuid';
 import useDifficulty from '../hooks/useDifficulty';
-import Button from './ui/Button';
-import SapperStoreInstance from '../store';
 
 const Setting: FC = () => {
   const difficulty = useDifficulty();

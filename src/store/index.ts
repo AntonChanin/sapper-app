@@ -5,7 +5,7 @@ import config from '../app.config';
 class SapperStore {
   difficulty = localStorage.getItem('difficulty') ?? 'low';
   flagAmmo = config.difficultyRule[this.difficulty].mineCount ?? 0;
-  leaderBoard: string[] = JSON.parse(localStorage.getItem('leaderBoard') ?? '[]');
+  leaderBoard: string[] = [...JSON.parse(localStorage.getItem('leaderBoard') ?? '[]')];
 
   constructor() {
     makeObservable(this, {
@@ -31,7 +31,6 @@ class SapperStore {
       this.leaderBoard.push(record);
       this.leaderBoard.sort((a, b) => +a - +b);
       localStorage.setItem('leaderBoard', JSON.stringify(this.leaderBoard));
-      console.log(localStorage.getItem('leaderBoard'));
     } 
   }
 };

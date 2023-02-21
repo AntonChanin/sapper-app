@@ -1,17 +1,17 @@
 import { FC, useEffect, useState } from 'react';
 import { observer } from 'mobx-react-lite';
 
-import config from '../app.config';
-import useCanWin from '../hooks/useCanWin';
 import SapperStoreInstance from '../store';
-import { Coord } from '../types/common';
-import { Status, Mask } from '../types/field';
-import { HandleClick, HandleMouseDown } from '../types/handlers';
-import getRandomInRange from '../utils/getRandomInRange';
 import Field from './ui/Field';
 import Title from './ui/Title';
 import Button from './ui/Button';
+import config from '../app.config';
 import createClass from '../utils/createClass';
+import getRandomInRange from '../utils/getRandomInRange';
+import useCanWin from '../hooks/useCanWin';
+import { Coord } from '../types/common';
+import { Status, Mask } from '../types/field';
+import { HandleClick, HandleMouseDown } from '../types/handlers';
 
 const Mine = -1;
 
@@ -64,7 +64,7 @@ const Game: FC = () => {
     localStorage.setItem('difficulty', difficulty);
   }, [difficulty]);
 
-  useEffect(() => addLeaderToBoard(currentTime), [status === Status.WIN, currentTime]);
+  useEffect(() =>{ status === Status.WIN && addLeaderToBoard(currentTime); }, [currentTime]);
 
   useCanWin({ field, target: Mine, mask, callback: () => setStatus(Status.WIN) });
 
