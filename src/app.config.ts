@@ -23,17 +23,17 @@ const config: Config<FillCallback> = {
     low: {
       size: { x: 8, y: 8 },
       mineCount: 10,
-      slotScale: 'w-10 h-10 min-w-[2.5rem] min-h-[2.5rem] m-0.5',
+      slotScale: 'w-10 h-10 min-w-[2.5rem] min-h-[2.5rem]',
     },
     medium: {
       size: { x: 16, y: 16 },
       mineCount: 40,
-      slotScale: 'w-[1.25rem] h-[1.25rem] min-w-[1.25rem] min-h-[1.25rem] text-sm m-0.25',
+      slotScale: 'w-[1.25rem] h-[1.25rem] min-w-[1.25rem] min-h-[1.25rem] text-sm',
     },
     hard: {
       size: { x: 32, y: 16 },
       mineCount: 100,
-      slotScale: 'w-[0.62rem] h-[0.62rem] min-w-[0.62rem] min-h-[0.62rem] text-xs m-0.1',
+      slotScale: 'w-[0.62rem] h-[0.62rem] min-w-[0.62rem] min-h-[0.62rem] text-xs',
     },
   },
   fillFunc: (coord, ctx) => {
