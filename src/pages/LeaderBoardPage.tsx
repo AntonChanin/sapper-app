@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+
 import LeaderBoard from '../components/LeaderBoard';
 
 const LeaderBoardPage: FC = () => (

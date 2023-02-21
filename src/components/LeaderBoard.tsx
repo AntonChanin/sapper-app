@@ -1,8 +1,9 @@
 import { FC } from 'react';
 import { observer } from 'mobx-react-lite';
 
-import createClass from '../utils/createClass';
 import SapperStoreInstance from '../store';
+import createClass from '../utils/createClass';
+import uuid from '../utils/uuid';
 
 const LeaderBoard: FC = () => {
   const { leaderBoard } = SapperStoreInstance;
@@ -10,9 +11,9 @@ const LeaderBoard: FC = () => {
   return (
     <div>
       <b>Таблица лидеров:</b>
-      {leaderBoard.map((time, index) => (
-        <div className={createClass([ 'flex', 'justify-between', 'border-b-2'])}>
-          <b>{index}</b>{Math.round(+time / 60)}m : {+time % 60}s
+      {leaderBoard.map(({ nickname, scope }) => (
+        <div key={uuid()} className={createClass([ 'flex', 'justify-between', 'border-b-2'])}>
+          <b>{nickname}</b>{Math.round(+scope / 60)}m : {+scope % 60}s
         </div>
       ))}
     </div>

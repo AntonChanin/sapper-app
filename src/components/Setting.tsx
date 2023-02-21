@@ -1,20 +1,26 @@
 import { FC } from 'react';
 import { observer } from 'mobx-react-lite';
 
+import SapperStoreInstance from '../store';
+import Button from './ui/Button';
+import Input from './ui/Input';
 import config from '../app.config';
 import createClass from '../utils/createClass';
 import uuid from '../utils/uuid';
 import useDifficulty from '../hooks/useDifficulty';
-import Button from './ui/Button';
-import SapperStoreInstance from '../store';
+
 
 const Setting: FC = () => {
   const difficulty = useDifficulty();
-  const { changeDifficulty, difficulty: current } = SapperStoreInstance;
+  const { difficulty: current, nickname, changeDifficulty, changeNickname, } = SapperStoreInstance;
   const { mineCount, size: { x, y } } = config.difficultyRule[current];
 
   const updateDifficulty = (value: string) => () => {
     changeDifficulty(value);
+  };
+
+  const updateNickname  = (value: string) => {
+    changeNickname(value);
   };
 
   return (<div className={createClass(['flex', 'flex-col'])}>
@@ -25,6 +31,7 @@ const Setting: FC = () => {
       <b>Уровень сложнасти: </b>
       {difficulty.map((name) => <Button key={uuid()} title={name} className={`${current === name && 'border-double'}`} callback={updateDifficulty(name)} />)}
     </div>
+    <Input label={<b>Имя игрока:</b>} className="w-56" value={nickname} callback={updateNickname} />
   </div>);
 }
 
