@@ -43,6 +43,18 @@ const Setting: FC = () => {
 
   return (<div className={createClass(['flex', 'flex-col', 'max-w-xs', 'min-w-[300px]'])}>
     <Input label={<b>Имя игрока:</b>} className="w-40 mb-2" value={nickname} sound={config.sound['input']} callback={updateNickname} />
+    <div  className={createClass(['flex', 'flex-col'])}>
+      <b>Звуки:</b>
+      {Object.keys(config.sound).map((name) => (
+        <Input
+          type="text"
+          label={<b>Звук '{name}'</b>}
+          className="w-40 mb-2"
+          placeholder={config.sound[name]}
+          sound={config.sound['input']}
+          callback={(value) => config.sound[name] = value}
+        />)
+    )}</div>
     <h2 className={createClass(['text-xl', 'font-bold'])}>Подробности сложнасти</h2>
     <div className={createClass(['flex', 'flex-row', 'justify-between', 'items-center', 'mb-2'])}><b>Размер поля: </b>{x} x {x}</div>
     <div className={createClass(['flex', 'flex-row', 'justify-between', 'items-center','mb-2'])}><b>Число мин: </b>{mineCount}</div>
@@ -69,8 +81,8 @@ const Setting: FC = () => {
       <Input
         type="number"
         label={<b>По Y</b>}
-        className="w-40  bg-blue-300"
-        placeholder="unsupported"
+        className="w-40 bg-blue-300"
+        placeholder="Y unsupported"
         sound={config.sound['input']}
         callback={updateCustomDifficulty('y')}
         disabled={true}

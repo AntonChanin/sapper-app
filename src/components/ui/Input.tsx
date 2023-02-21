@@ -19,7 +19,7 @@ const Input: FC<Props> = (props) => {
     className = '',
     placeholder = '',
     label,
-    value = '',
+    value,
     type = 'text',
     disabled = false,
     sound,
