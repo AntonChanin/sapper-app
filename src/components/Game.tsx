@@ -146,7 +146,7 @@ const Game: FC = () => {
   );
   
   return (
-    <div className={createClass(['min-w-[300px]'])}>
+    <div className={createClass(['min-w-[300px]', 'w-[300px]'])}>
       <Field dimension={dimension} slotProps={slotProps} ctx={context} />
       <div className={createClass(['flex', 'justify-around'])}>
         {getTimer()}

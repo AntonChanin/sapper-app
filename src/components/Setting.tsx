@@ -41,7 +41,7 @@ const Setting: FC = () => {
     setCurrentDifficulty(custom);
   };
 
-  return (<div className={createClass(['flex', 'flex-col', 'max-w-xs', 'min-w-[300px]'])}>
+  return (<div className={createClass(['flex', 'flex-col', 'max-w-xs', 'min-w-[300px]', 'w-[300px]'])}>
     <Input label={<b>Имя игрока:</b>} className="w-40 mb-2" value={nickname} sound={config.sound['input']} callback={updateNickname} />
     <div  className={createClass(['flex', 'flex-col'])}>
       <b>Звуки:</b>
