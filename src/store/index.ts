@@ -15,12 +15,21 @@ class SapperStore {
       flagAmmo: observable,
       leaderBoard: observable,
       nickname: observable,
+      addLeaderToBoard: action.bound,
       changeDifficulty: action.bound,
       changeFlagAmmo: action.bound,
       changeNickname: action.bound,
-      addLeaderToBoard: action.bound,
+      refreshFlagAmmo: action.bound,
     });
   };
+  
+  addLeaderToBoard = (record: LeadRecord) => {
+    if (+record.scope) {
+      this.leaderBoard.push(record);
+      this.leaderBoard.sort((a, b) => +a.scope - +b.scope);
+      localStorage.setItem('leaderBoard', JSON.stringify(this.leaderBoard));
+    } 
+  }
 
   changeDifficulty = (newDifficulty: string) => {
     this.difficulty = newDifficulty;
@@ -35,13 +44,9 @@ class SapperStore {
     localStorage.setItem('nickname', change);
   };
 
-  addLeaderToBoard = (record: LeadRecord) => {
-    if (+record.scope) {
-      this.leaderBoard.push(record);
-      this.leaderBoard.sort((a, b) => +a.scope - +b.scope);
-      localStorage.setItem('leaderBoard', JSON.stringify(this.leaderBoard));
-    } 
-  }
+  refreshFlagAmmo = () => {
+    this.flagAmmo = config.difficultyRule[this.difficulty].mineCount;
+  };
 };
 
 const SapperStoreInstance = new SapperStore();

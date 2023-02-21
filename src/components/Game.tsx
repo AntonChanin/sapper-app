@@ -8,12 +8,13 @@ import Button from './ui/Button';
 import config from '../app.config';
 import createClass from '../utils/createClass';
 import getRandomInRange from '../utils/getRandomInRange';
+import uuid from '../utils/uuid';
 import useCanWin from '../hooks/useCanWin';
 import useSoundConfig from '../hooks/useSoundConfig';
+import useLeadBoard from '../hooks/useLeadBoard';
 import { Coord } from '../types/common';
 import { Status, Mask } from '../types/field';
 import { HandleClick, HandleMouseDown } from '../types/handlers';
-import useLeadBoard from '../hooks/useLeadBoard';
 
 const Mine = -1;
 
@@ -46,13 +47,14 @@ const createField = (size: number, mineCount: number): number[] => {
 }
 
 const Game: FC = () => {
-  const { difficulty, flagAmmo, nickname, changeFlagAmmo, addLeaderToBoard } = SapperStoreInstance;
+  const { difficulty, flagAmmo, changeFlagAmmo, refreshFlagAmmo } = SapperStoreInstance;
   const { size: { x: size }, mineCount } = config.difficultyRule[difficulty];
   const dimension = new Array(size).fill(null);
   const [currentTime, setCurrentTime] = useState('0');
   const [status, setStatus] = useState(Status.NONE);
   const [field, setField] = useState(() => createField(size, mineCount));
   const [mask, setMask] = useState<Mask[]>(() => new Array(size * size).fill(Mask.FILL));
+  const [timerSeed, updateTimerSeed] = useState(uuid());
 
   const sounds = useSoundConfig(Object.keys(config.sound));
 
@@ -60,7 +62,9 @@ const Game: FC = () => {
     setField(() => createField(size, mineCount));
     setMask(() => new Array(size * size).fill(Mask.FILL));
     setStatus(Status.NONE);
-    changeFlagAmmo(-flagAmmo + mineCount);
+    refreshFlagAmmo();
+    setCurrentTime('0');
+    updateTimerSeed(uuid());
   };
 
   useEffect(() => {
@@ -130,12 +134,22 @@ const Game: FC = () => {
   };
 
   const context = { mask, field, size, target: Mine };
+
+  const getTimer = () => config.timerRender(
+    {
+      initialMinute: 0,
+      initialSeconds: 0,
+      seed: timerSeed,
+      isStop: status !== Status.NONE,
+    },
+    (props) => setCurrentTime(`${props?.time}`)
+  );
   
   return (
-    <div>
-      <Field dimension={dimension} difficulty={difficulty} slotProps={slotProps} ctx={context} />
+    <div className={createClass(['min-w-[300px]'])}>
+      <Field dimension={dimension} slotProps={slotProps} ctx={context} />
       <div className={createClass(['flex', 'justify-around'])}>
-        {config.timerRender({ initialMinute: 0, initialSeconds: 0, isStop: status !== Status.NONE },(props) => setCurrentTime(`${props?.time}`))}
+        {getTimer()}
         <div className={createClass(['flex', 'items-center'])}>Запас флагов: {flagAmmo}</div>
         <Button title={'🔄'} className={`${status !== Status.NONE && 'bg-sky-300'}`} sound={config.sound['button']} callback={reftesh} />
       </div>

@@ -6,7 +6,6 @@ import { HandleClick, HandleMouseDown } from '../../types/handlers';
 
 type Props = {
   dimension: number[];
-  difficulty: string;
   slotProps: FieldSlotProps<HandleClick, HandleMouseDown, FillCallback>;
   ctx: FillContext;
 };
@@ -15,7 +14,7 @@ const Field: FC<Props> = (props) => {
   const { dimension } = props;
 
   return (
-      <div className='max-w-xs max-h-[320px] m-auto block overflow-auto'>
+      <div className='max-w-xs max-h-[320px] m-auto block overflow-auto w-fit'>
       {dimension.map((_, y) => (
         <FieldRow key={y} y={y} {...props} />
       ))}

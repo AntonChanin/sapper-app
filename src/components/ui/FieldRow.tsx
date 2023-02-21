@@ -9,11 +9,10 @@ type Props = {
     y: number;
     slotProps: FieldSlotProps<HandleClick, HandleMouseDown, FillCallback>;
     ctx: FillContext;
-    difficulty: string;
 };
 
 const FieldRow: FC<Props> = (props) => {
-  const { dimension, difficulty, y, slotProps, ctx } = props;
+  const { dimension, y, slotProps, ctx } = props;
   return (
     <div className="flex">{
       dimension.map((_, x) => (
@@ -24,7 +23,6 @@ const FieldRow: FC<Props> = (props) => {
             onClick: slotProps.onClick({ x, y }),
             onMouseDown: slotProps.onMouseDown({ x, y }),
             fillField: slotProps.fillField({ x, y }, ctx),
-            difficulty,
           }}
         />
       ))

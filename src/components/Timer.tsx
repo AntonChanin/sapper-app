@@ -8,13 +8,19 @@ type Props = {
   initialSeconds? : number;
   isStop?: boolean;
   change?: number;
+  seed?: string;
   callback?: (props?: Record<string, string | number>) => void;
 }
 
 const Timer: FC<Props> = (props) => {
-  const { initialMinute = 0, initialSeconds = 0, isStop = false, change = 1, callback } = props;
+  const { initialMinute = 0, initialSeconds = 0, isStop = false, change = 1, seed, callback } = props;
   const [ minutes, setMinutes ] = useState(initialMinute);
   const [ seconds, setSeconds ] =  useState(initialSeconds);
+
+  useEffect(() => {
+    setSeconds(initialSeconds);
+    setMinutes(initialMinute);
+  }, [seed])
 
   useEffect(() => {
     let myInterval = setInterval(

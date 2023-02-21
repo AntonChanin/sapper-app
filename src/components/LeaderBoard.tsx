@@ -9,7 +9,7 @@ const LeaderBoard: FC = () => {
   const { leaderBoard } = SapperStoreInstance;
 
   return (
-    <div>
+    <div className={createClass([ 'min-w-[300px]'])}>
       <b>Таблица лидеров:</b>
       {leaderBoard.map(({ nickname, scope }) => (
         <div key={uuid()} className={createClass([ 'flex', 'justify-between', 'border-b-2'])}>

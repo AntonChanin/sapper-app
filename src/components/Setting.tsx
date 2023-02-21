@@ -37,7 +37,6 @@ const Setting: FC = () => {
       const highBorder = +custom.size.x * +custom.size.x;
       custom[field as 'mineCount'] = +value > 0 ? (+value < highBorder ?  +value : highBorder) : 1;
     };
-    custom['slotScale'] = 'w-10 h-10 min-w-[2.5rem] min-h-[2.5rem]';
     setCustom(prev => ({ ...prev }));
     setCurrentDifficulty(custom);
   };

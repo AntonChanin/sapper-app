@@ -8,7 +8,6 @@ type Coord = {
 type DifficultySetting = {
   size: Coord;
   mineCount: number;
-  slotScale: string;
 };
 
 type Config<FF> = {
@@ -24,6 +23,7 @@ type Config<FF> = {
     props: {
     initialMinute: number;
     initialSeconds: number;
+    seed: string;
     isStop: boolean;
     }, 
     callback?: (props?: Record<string, string | number>) => void
