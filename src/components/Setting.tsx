@@ -42,27 +42,27 @@ const Setting: FC = () => {
     setCurrentDifficulty(custom);
   };
 
-  return (<div className={createClass(['flex', 'flex-col'])}>
-    <Input label={<b>Имя игрока:</b>} className="w-56" value={nickname} sound={config.sound['input']} callback={updateNickname} />
+  return (<div className={createClass(['flex', 'flex-col', 'max-w-xs', 'min-w-[300px]'])}>
+    <Input label={<b>Имя игрока:</b>} className="w-40 mb-2" value={nickname} sound={config.sound['input']} callback={updateNickname} />
     <h2 className={createClass(['text-xl', 'font-bold'])}>Подробности сложнасти</h2>
-    <div className={createClass(['flex', 'flex-row', 'justify-between', 'items-center'])}><b>Размер поля: </b>{x} x {x}</div>
-    <div className={createClass(['flex', 'flex-row', 'justify-between', 'items-center'])}><b>Число мин: </b>{mineCount}</div>
-    <div className={createClass(['flex', 'flex-row', 'justify-between', 'items-center'])}>
-      <b>Уровень сложнасти: </b>
+    <div className={createClass(['flex', 'flex-row', 'justify-between', 'items-center', 'mb-2'])}><b>Размер поля: </b>{x} x {x}</div>
+    <div className={createClass(['flex', 'flex-row', 'justify-between', 'items-center','mb-2'])}><b>Число мин: </b>{mineCount}</div>
+    <b className={createClass(['flex'])}>Уровень сложнасти: </b>
+    <div className={createClass(['flex', 'flex-row', 'justify-between', 'items-center', 'flex-col'])}>  
       {difficulty.map((name) => <Button
         key={uuid()}
         title={name}
-        className={`${current === name && 'border-double'}`}
+        className={`${current === name && 'border-double'} w-52`}
         sound={config.sound['button']}
         callback={updateDifficulty(name)}
       />)}
     </div>
-    <div>{current === 'custom' && (<>
+    <div className={createClass(['flex', 'flex-col'])}>{current === 'custom' && (<>
       <b>Размер поля:</b>
       <Input
         type="number"
         label={<b>По X</b>}
-        className="w-56"
+        className="w-40 mb-2"
         value={custom.size.x}
         sound={config.sound['input']}
         callback={updateCustomDifficulty('x')}
@@ -70,7 +70,7 @@ const Setting: FC = () => {
       <Input
         type="number"
         label={<b>По Y</b>}
-        className="w-56 bg-blue-300"
+        className="w-40  bg-blue-300"
         placeholder="unsupported"
         sound={config.sound['input']}
         callback={updateCustomDifficulty('y')}
@@ -80,7 +80,7 @@ const Setting: FC = () => {
       <Input
         type="number"
         label={<b>Количество мин</b>}
-        className="w-56"
+        className="w-40"
         value={custom.mineCount > 0 ? custom.mineCount : 1}
         sound={config.sound['input']}
         callback={updateCustomDifficulty('mineCount')}
