@@ -2,6 +2,11 @@ import { Config } from './types/common';
 import { FillCallback, Mask } from './types/field';
 import { default as timerRender } from './utils/render';
 
+const custom = JSON.parse(
+  localStorage.getItem('customDifficulty')
+    ?? '{ "size": { "x": 8, "x": 8 }, "mineCount": 4, "slotScale": "w-10 h-10 min-w-[2.5rem] min-h-[2.5rem]" }'
+);
+
 const config: Config<FillCallback> = {
   incrementRule: [
     { x: 1, y: 0 },
@@ -35,6 +40,7 @@ const config: Config<FillCallback> = {
       mineCount: 100,
       slotScale: 'w-[0.62rem] h-[0.62rem] min-w-[0.62rem] min-h-[0.62rem] text-xs',
     },
+    custom,
   },
   fillFunc: (coord, ctx) => {
     const { x, y } = coord;

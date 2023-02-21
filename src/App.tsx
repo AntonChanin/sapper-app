@@ -8,7 +8,6 @@ import SettingsPage from './pages/SettingsPage';
 import './App.css';
 
 const App = () => {
-  
   return (
     <div className="App">
       <Navigation />
