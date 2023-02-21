@@ -68,6 +68,12 @@ const config: Config<FillCallback> = {
     'bg-black',
     'bg-white',
   ],
+  sound: {
+    lose: 'src/assets/sounds/Small-explosion-in-the-distance-sound-effect.mp3',
+    win: 'src/assets/sounds/win-sound-effect.mp3',
+    button: 'src/assets/sounds/machine-button-being-pressed-sound-effect.mp3',
+    input: 'src/assets/sounds/vintage-button-sound-effect.mp3',
+  },
   statePaletRule: {
     default: 'bg-teal-500',
     win: 'bg-amber-500',

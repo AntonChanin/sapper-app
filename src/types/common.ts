@@ -26,7 +26,9 @@ type Config<FF> = {
     initialSeconds: number;
     isStop: boolean;
     }, 
-    callback?: (props?: Record<string, string | number>) => void) => JSX.Element,
+    callback?: (props?: Record<string, string | number>) => void
+  ) => JSX.Element,
+  sound: Record<string, string>,
 };
 
 export type { Coord, Config };

@@ -9,9 +9,11 @@ import config from '../app.config';
 import createClass from '../utils/createClass';
 import getRandomInRange from '../utils/getRandomInRange';
 import useCanWin from '../hooks/useCanWin';
+import useSoundConfig from '../hooks/useSoundConfig';
 import { Coord } from '../types/common';
 import { Status, Mask } from '../types/field';
 import { HandleClick, HandleMouseDown } from '../types/handlers';
+import useLeadBoard from '../hooks/useLeadBoard';
 
 const Mine = -1;
 
@@ -52,6 +54,8 @@ const Game: FC = () => {
   const [field, setField] = useState(() => createField(size, mineCount));
   const [mask, setMask] = useState<Mask[]>(() => new Array(size * size).fill(Mask.FILL));
 
+  const sounds = useSoundConfig(Object.keys(config.sound));
+
   const reftesh = () => {
     setField(() => createField(size, mineCount));
     setMask(() => new Array(size * size).fill(Mask.FILL));
@@ -60,12 +64,11 @@ const Game: FC = () => {
   };
 
   useEffect(() => {
-    reftesh()
+    reftesh();
     localStorage.setItem('difficulty', difficulty);
   }, [difficulty]);
 
-  useEffect(() =>{ status === Status.WIN && addLeaderToBoard({ nickname,  scope: currentTime }); }, [currentTime]);
-
+  useLeadBoard({ status, scope: currentTime });
   useCanWin({ field, target: Mine, mask, callback: () => setStatus(Status.WIN) });
 
   const handleClick: HandleClick =
@@ -93,6 +96,7 @@ const Game: FC = () => {
       if (field[y * size + x] === Mine) {
         mask.forEach((_,i) => mask[i] = Mask.TRANSPARENT);
         setStatus(Status.LOSE);
+        sounds['lose']();
       }
       setMask((prev) => [...prev]);
     };
@@ -103,6 +107,7 @@ const Game: FC = () => {
       if (e.button === 1) {
         e.stopPropagation();
         if (status !== Status.NONE) return;
+        sounds['button']();
         if (mask[y * size + x] === Mask.TRANSPARENT) return;
         if (mask[y * size + x] === Mask.FILL && flagAmmo > 0) {
           mask[y * size + x] = Mask.FLAG;
@@ -128,13 +133,13 @@ const Game: FC = () => {
   
   return (
     <div>
-      <Title value={status} />
       <Field dimension={dimension} difficulty={difficulty} slotProps={slotProps} ctx={context} />
       <div className={createClass(['flex', 'justify-around'])}>
         {config.timerRender({ initialMinute: 0, initialSeconds: 0, isStop: status !== Status.NONE },(props) => setCurrentTime(`${props?.time}`))}
         <div className={createClass(['flex', 'items-center'])}>Запас флагов: {flagAmmo}</div>
-        <Button title={'🔄'} className={`${status !== Status.NONE && 'bg-sky-300'}`} callback={reftesh} />
+        <Button title={'🔄'} className={`${status !== Status.NONE && 'bg-sky-300'}`} sound={config.sound['button']} callback={reftesh} />
       </div>
+      <Title value={status} />
     </div>
   );
 };

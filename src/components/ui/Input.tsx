@@ -1,5 +1,6 @@
 import { ChangeEventHandler, FC, ReactNode } from 'react';
 
+import useSound from '../../hooks/useSound';
 import createClass from '../../utils/createClass';
 
 type Props = {
@@ -7,13 +8,15 @@ type Props = {
   placeholder?: string;
   label?: ReactNode;
   value?: string;
+  sound?: string;
   callback?(value: string): void;
 };
 
 const Input: FC<Props> = (props) => {
-  const { className = '', placeholder = '', label, value = '', callback } = props;
+  const { className = '', placeholder = '', label, value = '', sound, callback } = props;
   const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
     e.preventDefault();
+    sound && useSound(sound).applaySound();
     callback?.(e.target.value);
   };
 
