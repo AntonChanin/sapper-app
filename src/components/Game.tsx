@@ -44,7 +44,7 @@ const createField = (size: number, mineCount: number): number[] => {
 }
 
 const Game: FC = () => {
-  const { difficulty, flagAmmo, changeFlagAmmo, addLeaderToBoard } = SapperStoreInstance;
+  const { difficulty, flagAmmo, nickname, changeFlagAmmo, addLeaderToBoard } = SapperStoreInstance;
   const { size: { x: size }, mineCount } = config.difficultyRule[difficulty];
   const dimension = new Array(size).fill(null);
   const [currentTime, setCurrentTime] = useState('0');
@@ -64,7 +64,7 @@ const Game: FC = () => {
     localStorage.setItem('difficulty', difficulty);
   }, [difficulty]);
 
-  useEffect(() =>{ status === Status.WIN && addLeaderToBoard(currentTime); }, [currentTime]);
+  useEffect(() =>{ status === Status.WIN && addLeaderToBoard({ nickname,  scope: currentTime }); }, [currentTime]);
 
   useCanWin({ field, target: Mine, mask, callback: () => setStatus(Status.WIN) });
 

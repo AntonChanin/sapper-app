@@ -8,14 +8,12 @@ import uuid from '../utils/uuid';
 const LeaderBoard: FC = () => {
   const { leaderBoard } = SapperStoreInstance;
 
-  console.log(leaderBoard);
-
   return (
     <div>
       <b>Таблица лидеров:</b>
-      {leaderBoard.map((time, index) => (
+      {leaderBoard.map(({ nickname, scope }) => (
         <div key={uuid()} className={createClass([ 'flex', 'justify-between', 'border-b-2'])}>
-          <b>{index}</b>{Math.round(+time / 60)}m : {+time % 60}s
+          <b>{nickname}</b>{Math.round(+scope / 60)}m : {+scope % 60}s
         </div>
       ))}
     </div>
