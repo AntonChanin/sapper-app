@@ -72,10 +72,14 @@ const config: Config<FillCallback> = {
     'bg-white',
   ],
   sound: {
-    lose: 'src/assets/sounds/Small-explosion-in-the-distance-sound-effect.mp3',
-    win: 'src/assets/sounds/win-sound-effect.mp3',
-    button: 'src/assets/sounds/machine-button-being-pressed-sound-effect.mp3',
-    input: 'src/assets/sounds/vintage-button-sound-effect.mp3',
+    lose: 'sounds/Small-explosion-in-the-distance-sound-effect.mp3',
+    win: 'sounds/win-sound-effect.mp3',
+    button: 'sounds/machine-button-being-pressed-sound-effect.mp3',
+    input: 'sounds/vintage-button-sound-effect.mp3',
+  },
+  soundPathRoot: {
+    local: 'public/',
+    server: '',
   },
   statePaletRule: {
     default: 'bg-teal-500',

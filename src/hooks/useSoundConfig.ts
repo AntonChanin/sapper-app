@@ -7,7 +7,7 @@ const useSoundConfig = (namespace: string[]) => {
   const [sounds, setSounds] =  useState<Record<string, () => void>>({});
   useEffect(() => {
     namespace.forEach((soundName) => {
-      sounds[soundName] = useSound(config.sound[soundName]).applaySound;
+      sounds[soundName] = useSound(config.sound[soundName]);
       setSounds((prev) => prev);
     });
   }, []);

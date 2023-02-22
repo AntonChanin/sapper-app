@@ -15,7 +15,7 @@ const Button: FC<Props> = (props) => {
 
   const handleClick: MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();
-    sound && useSound(sound).applaySound();
+    sound && useSound(sound)();
     callback?.();
   }
 

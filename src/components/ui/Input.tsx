@@ -27,7 +27,7 @@ const Input: FC<Props> = (props) => {
   } = props;
   const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
     e.preventDefault();
-    sound && useSound(sound).applaySound();
+    sound && useSound(sound)();
     callback?.(e.target.value);
   };
 

@@ -29,6 +29,7 @@ type Config<FF> = {
     callback?: (props?: Record<string, string | number>) => void
   ) => JSX.Element,
   sound: Record<string, string>,
+  soundPathRoot: Record<string, string>,
 };
 
 export type { Coord, Config };

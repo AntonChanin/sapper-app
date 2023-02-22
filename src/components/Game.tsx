@@ -78,7 +78,8 @@ const Game: FC = () => {
   const handleClick: HandleClick =
     ({ x, y }) => (e) => {
       e.preventDefault();
-      if (status !== Status.NONE) return;
+      sounds['button']();
+      if (status !== Status.NONE || mask[y * size + x] === Mask.FLAG) return;
       if (mask[y * size + x] === Mask.TRANSPARENT) return;
       const clearing:Coord[] = [];
 
@@ -111,7 +112,6 @@ const Game: FC = () => {
       if (e.button === 1) {
         e.stopPropagation();
         if (status !== Status.NONE) return;
-        sounds['button']();
         if (mask[y * size + x] === Mask.TRANSPARENT) return;
         if (mask[y * size + x] === Mask.FILL && flagAmmo > 0) {
           mask[y * size + x] = Mask.FLAG;
