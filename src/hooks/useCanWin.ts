@@ -3,6 +3,9 @@ import { useEffect } from 'react';
 import { Mask } from '../types/field';
 import useSound from './useSound';
 import config from '../app.config';
+import FlagModel from '../model/flag';
+import SlotModel from '../model/slot';
+import FillModel from '../model/fill';
 
 type Props = {
   field: number[];
@@ -20,9 +23,10 @@ const useCanWin = (props: Props) => {
         !field.map(
           (f, i) => {
             if (f === target) {
-              return mask[i] === Mask.FLAG;
+              if (mask[i] === SlotModel.mask) return false;
+              return (mask[i] === FlagModel.mask || FillModel.mask);
             } else {
-              return mask[i] === Mask.TRANSPARENT;
+              return mask[i] === SlotModel.mask;
             }
           }
         ).includes(false)

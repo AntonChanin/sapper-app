@@ -10,6 +10,17 @@ type DifficultySetting = {
   mineCount: number;
 };
 
+type TimerSetting = {
+  initialMinute: number;
+  initialSeconds : number;
+  isStop: boolean;
+  change: number;
+  seed: string;
+  updateSeconds(seconds: number): void;
+  updateMuinutes(minutes: number): void;
+  callback(props?: Record<string, string | number>): void;
+};
+
 type Config<FF> = {
   incrementRule: Coord[];
   clearRule: Coord[];
@@ -19,17 +30,8 @@ type Config<FF> = {
   fontPaletRule: string[];
   fillPaletRule: string[];
   statePaletRule: Record<string, string>;
-  timerRender: (
-    props: {
-    initialMinute: number;
-    initialSeconds: number;
-    seed: string;
-    isStop: boolean;
-    }, 
-    callback?: (props?: Record<string, string | number>) => void
-  ) => JSX.Element,
   sound: Record<string, string>,
   soundPathRoot: Record<string, string>,
 };
 
-export type { Coord, Config };
+export type { Coord, TimerSetting, Config };

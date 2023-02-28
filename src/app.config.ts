@@ -1,6 +1,5 @@
 import { Config } from './types/common';
 import { FillCallback, Mask } from './types/field';
-import { default as timerRender } from './utils/render';
 
 const custom = JSON.parse(
   localStorage.getItem('customDifficulty')
@@ -46,7 +45,7 @@ const config: Config<FillCallback> = {
       mask[y * size + x] !== Mask.TRANSPARENT
         ? config.view[mask[y * size + x]]
         : field[y * size + x] === target
-          ? '💣'
+          ? config.view[Mask.MINE]
           : field[y * size + x]
     );
   },
@@ -90,9 +89,9 @@ const config: Config<FillCallback> = {
     [Mask.TRANSPARENT]: null,
     [Mask.FILL]: '🌿',
     [Mask.FLAG]: '🚩',
+    [Mask.MINE]: '💣',
     [Mask.QUESTION]: '❓',
   },
-  timerRender,
 };
 
 export default config;

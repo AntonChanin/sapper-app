@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 import { Coord } from './common';
 
 enum Mask {
+    MINE,
     TRANSPARENT,
     FILL,
     FLAG,

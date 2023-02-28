@@ -1,59 +1,42 @@
-import React, { useState, useEffect, FC } from 'react'
+import React, { useState, useEffect, FC, useMemo } from 'react'
 
-import hourglass from '../assets/hourglass.svg';
+import TimerModel from '../model/timer';
+import { TimerSetting } from '../types/common';
 
 
 type Props = {
-  initialMinute?: number;
-  initialSeconds? : number;
-  isStop?: boolean;
-  change?: number;
-  seed?: string;
-  callback?: (props?: Record<string, string | number>) => void;
+  model?: TimerModel;
+  options: Partial<TimerSetting>;
+  view(minutes: number, seconds: number): JSX.Element;
 }
 
+const presset = {
+  model: new TimerModel({}),
+};
+
 const Timer: FC<Props> = (props) => {
-  const { initialMinute = 0, initialSeconds = 0, isStop = false, change = 1, seed, callback } = props;
+  const { model = presset.model, options, view } = props;
+  const { initialMinute, initialSeconds, seed, change, clearTimer, startTimer, updateParam } = model;
   const [ minutes, setMinutes ] = useState(initialMinute);
   const [ seconds, setSeconds ] =  useState(initialSeconds);
+  useMemo(() => updateParam(options), [...Object.values(options)]);
+
+  useEffect(() => {
+    updateParam({
+      updateMuinutes: (minutes) => setMinutes(minutes),
+      updateSeconds:(seconds) => setSeconds(seconds),
+    });
+  }, []);
 
   useEffect(() => {
     setSeconds(initialSeconds);
     setMinutes(initialMinute);
-  }, [seed])
+  }, [seed]);
 
   useEffect(() => {
-    let myInterval = setInterval(
-    () => {
-      if (change < 0) {
-        if (seconds > 0) {
-          setSeconds(seconds + change);
-        }
-        if (seconds === 0) {
-          if (minutes === 0) {
-            clearInterval(myInterval);
-          } else {
-            setMinutes(minutes + change);
-            setSeconds(59);
-          }
-        } 
-      }
-      if (change > 0) {
-        if (seconds < 60) {
-          setSeconds(seconds + change);
-        }
-        if (seconds === 59) {
-          setMinutes(minutes + change);
-          setSeconds(0);
-        }
-      }
-    }, 1000);
-    if (isStop) {
-      callback?.({ time: `${minutes * 60 + seconds}` });
-      clearInterval(myInterval);
-    }
+    startTimer();
     return () => {
-      clearInterval(myInterval);
+      clearTimer();
     };
   });
 
@@ -64,20 +47,12 @@ const Timer: FC<Props> = (props) => {
         && (seconds === 0))
       )
         ? null
-        : (
-          <div className="flex place-items-center">
-            <h1>{minutes}:{seconds < 10 ?  `0${seconds}` : seconds}</h1>
-            <img className="w-8 h-8" alt="" src={hourglass} />
-          </div>
-        )
+        : view(minutes, seconds)
       }
     </>
   )
 };
 
-Timer.defaultProps = {
-  initialMinute: 0,
-  initialSeconds: 0,
-}
+Timer.defaultProps = { ...presset };
 
 export default Timer;

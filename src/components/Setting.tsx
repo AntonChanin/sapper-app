@@ -8,6 +8,8 @@ import config from '../app.config';
 import createClass from '../utils/createClass';
 import uuid from '../utils/uuid';
 import useDifficulty from '../hooks/useDifficulty';
+import clamp from '../utils/clamp';
+import getLower from '../utils/getLower';
 
 
 const Setting: FC = () => {
@@ -32,32 +34,47 @@ const Setting: FC = () => {
 
   const updateCustomDifficulty = (field: string) => (value: string) => {
     if (field === 'x' || field === 'y') {
-      custom.size[field as 'x' | 'y'] = +value > 3 ? +value : 3;
+      custom.size[field as 'x' | 'y'] = +value;
+      custom.size.x = clamp(custom.size.x, 3, 64);
+      custom.size.y = clamp(custom.size.y, 3, custom.size.x);
     } else {
-      const highBorder = +custom.size.x * +custom.size.x;
-      custom[field as 'mineCount'] = +value > 0 ? (+value < highBorder ?  +value : highBorder) : 1;
+      const { x, y } = custom.size;
+      const highBorder = Math.pow(getLower(x, y), 2);
+      custom[field as 'mineCount'] = clamp(+value, 3, highBorder);
     };
     setCustom(prev => ({ ...prev }));
     setCurrentDifficulty(custom);
   };
 
   return (<div className={createClass(['flex', 'flex-col', 'max-w-xs', 'min-w-[300px]', 'w-[300px]'])}>
-    <Input label={<b>Имя игрока:</b>} className="w-40 mb-2" value={nickname} sound={config.sound['input']} callback={updateNickname} />
+    <Input
+      label={<b>Имя игрока:</b>}
+      className={createClass(['w-40', 'mb-2'])}
+      value={nickname}
+      sound={config.sound['input']}
+      callback={updateNickname}
+    />
     <div  className={createClass(['flex', 'flex-col'])}>
       <b>Звуки:</b>
       {Object.keys(config.sound).map((name) => (
         <Input
+          key={uuid()}
           type="text"
           label={<b>Звук '{name}'</b>}
-          className="w-40 mb-2"
+          className={createClass(['w-40', 'mb-2'])}
           placeholder={config.sound[name]}
           sound={config.sound['input']}
           callback={(value) => config.sound[name] = value}
-        />)
-    )}</div>
+        />
+      ))}
+    </div>
     <h2 className={createClass(['text-xl', 'font-bold'])}>Подробности сложнасти</h2>
-    <div className={createClass(['flex', 'flex-row', 'justify-between', 'items-center', 'mb-2'])}><b>Размер поля: </b>{x} x {x}</div>
-    <div className={createClass(['flex', 'flex-row', 'justify-between', 'items-center','mb-2'])}><b>Число мин: </b>{mineCount}</div>
+    <div className={createClass(['flex', 'flex-row', 'justify-between', 'items-center', 'mb-2'])}>
+      <b>Размер поля: </b>{x} x {y}
+    </div>
+    <div className={createClass(['flex', 'flex-row', 'justify-between', 'items-center','mb-2'])}>
+      <b>Число мин: </b>{mineCount}
+    </div>
     <b className={createClass(['flex'])}>Уровень сложнасти: </b>
     <div className={createClass(['flex', 'flex-row', 'justify-between', 'items-center', 'flex-col'])}>  
       {difficulty.map((name) => <Button
@@ -81,11 +98,10 @@ const Setting: FC = () => {
       <Input
         type="number"
         label={<b>По Y</b>}
-        className="w-40 bg-blue-300"
-        placeholder="Y unsupported"
+        className="w-40"
+        value={custom.size.y}
         sound={config.sound['input']}
         callback={updateCustomDifficulty('y')}
-        disabled={true}
       />
       <br />
       <Input
@@ -98,6 +114,6 @@ const Setting: FC = () => {
       />
     </>)}</div>
   </div>);
-}
+};
 
 export default observer(Setting);
