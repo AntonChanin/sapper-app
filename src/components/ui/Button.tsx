@@ -7,16 +7,17 @@ type Props = {
   title: string;
   className?: string;
   sound?: string;
+  placeholder?: string;
   callback?(): void;
 }
 
 const Button: FC<Props> = (props) => {
-  const { callback, title, sound, className = '' } = props;
+  const { callback, title, sound, placeholder = '', className = '' } = props;
 
   const handleClick: MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();
     sound && useSound(sound)();
-    callback?.();
+    e && callback?.();
   }
 
   return (
@@ -29,6 +30,7 @@ const Button: FC<Props> = (props) => {
         'hover:border-indigo-300',
       ])}
       onClick={handleClick}
+      placeholder={placeholder}
     >
       {title}
     </button>

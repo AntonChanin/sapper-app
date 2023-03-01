@@ -1,37 +1,35 @@
-import React, { useState, useEffect, FC, useMemo } from 'react'
+import React, { useState, useEffect, FC } from 'react'
 
 import TimerModel from '../model/timer';
-import { TimerSetting } from '../types/common';
-
 
 type Props = {
-  model?: TimerModel;
-  options: Partial<TimerSetting>;
+  model: TimerModel;
   view(minutes: number, seconds: number): JSX.Element;
-}
-
-const presset = {
-  model: new TimerModel({}),
 };
 
 const Timer: FC<Props> = (props) => {
-  const { model = presset.model, options, view } = props;
-  const { initialMinute, initialSeconds, seed, change, clearTimer, startTimer, updateParam } = model;
-  const [ minutes, setMinutes ] = useState(initialMinute);
-  const [ seconds, setSeconds ] =  useState(initialSeconds);
-  useMemo(() => updateParam(options), [...Object.values(options)]);
+  const { model, view } = props;
+  const {
+    initialMinute,
+    initialSeconds,
+    seed,
+    change,
+    time: { instance },
+    clearTimer,
+    startTimer,
+    updateParam,
+  } = model;
+  const [ minutes, setMinutes ] = useState(model.time.minutes);
+  const [ seconds, setSeconds ] =  useState(model.time.seconds);
 
   useEffect(() => {
+    setMinutes(initialMinute);
+    setSeconds(initialSeconds);
     updateParam({
       updateMuinutes: (minutes) => setMinutes(minutes),
       updateSeconds:(seconds) => setSeconds(seconds),
     });
   }, []);
-
-  useEffect(() => {
-    setSeconds(initialSeconds);
-    setMinutes(initialMinute);
-  }, [seed]);
 
   useEffect(() => {
     startTimer();
@@ -52,7 +50,5 @@ const Timer: FC<Props> = (props) => {
     </>
   )
 };
-
-Timer.defaultProps = { ...presset };
 
 export default Timer;

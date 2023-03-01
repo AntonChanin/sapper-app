@@ -19,14 +19,33 @@ class Timer {
     this.updateParam(options);
   };
 
+  get time() {
+    return {
+      seconds: this.__seconds,
+      minutes: this.__minutes,
+      total: this.__minutes * 60 + this.__seconds,
+      instance: this.__time_instance,
+    };
+  };
+
   resetTime = () => {
     this.__minutes = this.initialMinute;
     this.__seconds = this.initialSeconds;
   };
+
+  refreshTimer = () => {
+    this.clearTimer();
+    this.startTimer();
+  };
   
   clearTimer = () => {
     clearInterval(this.__time_instance);
+    this.__time_instance = -1;
   };
+
+  stopTimer = () => {
+    this.isStop = true;
+  }
 
   changeSeconds() {
     this.__seconds += this.change;
@@ -94,13 +113,13 @@ class Timer {
     if (initialSeconds) this.initialSeconds = initialSeconds;
     if (isStop) this.isStop = isStop;
     if (change) this.change = change;
+    if (updateMuinutes) this.updateMuinutes = updateMuinutes;
+    if (updateSeconds) this.updateSeconds = updateSeconds;
+    if (callback) this.callback = callback;
     if (seed) {
       this.updateSeed(seed);
       this.resetTime();
     }
-    if (updateMuinutes) this.updateMuinutes = updateMuinutes;
-    if (updateSeconds) this.updateSeconds = updateSeconds;
-    if (callback) this.callback = callback;
   };
 
 };

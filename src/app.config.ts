@@ -38,6 +38,11 @@ const config: Config<FillCallback> = {
     },
     custom,
   },
+  leadBoard: {
+    top: 10,
+    sort: (a, b) => (+a.scope - +b.scope),
+    scopeView: (scope) => `${Math.round(+scope / 60)}m : ${+scope % 60}s`
+  },
   fillFunc: (coord, ctx) => {
     const { x, y } = coord;
     const { mask, field, size, target } = ctx;

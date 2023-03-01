@@ -1,4 +1,5 @@
 import { MaskRecord } from './field';
+import { LeadRecord } from './leadBoard';
 
 type Coord = {
   x: number;
@@ -24,6 +25,11 @@ type TimerSetting = {
 type Config<FF> = {
   incrementRule: Coord[];
   clearRule: Coord[];
+  leadBoard: {
+    top: number;
+    sort: (a: LeadRecord, b: LeadRecord) => number;
+    scopeView: ((scope: string) => string) | string;
+  },
   fillFunc: FF;
   view: MaskRecord;
   difficultyRule: Record<string, DifficultySetting>;

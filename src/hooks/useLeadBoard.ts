@@ -8,7 +8,7 @@ const useLeadBoard = (props: { status: Status, scope: string, }) => {
   const { addLeaderToBoard } = SapperStoreInstance;
   useEffect(() =>{
     status === Status.WIN && addLeaderToBoard({ nickname:  localStorage.getItem('nickname') ?? 'incognito',  scope });
-  }, [scope]);
+  }, [status]);
 };
 
 export default useLeadBoard;

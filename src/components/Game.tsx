@@ -55,29 +55,23 @@ const createField = (size: Coord, mineCount: number): number[] => {
 
 
 const Game: FC = () => {
-  const { difficulty, flagAmmo, changeFlagAmmo, refreshFlagAmmo } = SapperStoreInstance;
+  const { difficulty, flagAmmo, changeFlagAmmo, refreshFlagAmmo, saveTimer, getTimer } = SapperStoreInstance;
   const { size: { x, y }, mineCount } = config.difficultyRule[difficulty];
   const bigger = getBigger(x, y);
   const dimension = new Array(y).fill(new Array(x).fill(null));
   const [currentTime, setCurrentTime] = useState('0');
-  const [status, setStatus] = useState(Status.NONE);
+  const [status, setStatus] = useState<Status>(Status.NONE);
   const [field, setField] = useState(() => createField({ x, y }, mineCount));
   const [mask, setMask] = useState<Mask[]>(() => new Array(x * y).fill(FillModel.mask));
-  const [timerSeed, updateTimerSeed] = useState(uuid());
 
   const sounds = useSoundConfig(Object.keys(config.sound));
 
   const reftesh = () => {
-    setField(() => createField({ x, y }, mineCount));
-    setMask(() => new Array(x * y).fill(FillModel.mask));
-    setStatus(Status.NONE);
-    refreshFlagAmmo();
-    setCurrentTime('0');
-    updateTimerSeed(uuid());
+    location.reload();
   };
 
   useEffect(() => {
-    reftesh();
+    refreshFlagAmmo();
     localStorage.setItem('difficulty', difficulty);
   }, [difficulty]);
 
@@ -90,7 +84,7 @@ const Game: FC = () => {
       sounds['button']();
       if (status !== Status.NONE || mask[y * bigger + x] === FlagModel.mask) return;
       if (mask[y * bigger + x] === SlotModel.mask) return;
-      const clearing:Coord[] = [];
+      const clearing: Coord[] = [];
 
       const clear = (x: number, y: number) => {
         if (x >=0 && x < bigger && y >= 0 && y < bigger) {
@@ -148,9 +142,28 @@ const Game: FC = () => {
     <div className={createClass(['min-w-[300px]', 'w-[300px]'])}>
       <Field dimension={dimension} slotProps={slotProps} ctx={context} />
       <div className={createClass(['flex', 'justify-around'])}>
-        <TimerView seed={timerSeed} callback={(props) => setCurrentTime(`${props?.time}`)} />
+        <TimerView
+          model={getTimer()}
+          options={{ callback: (props) => setCurrentTime(`${props?.time}`), isStop: !!String(status) }}
+          saveToStore={(model) => saveTimer(model)}
+        />
         <div className={createClass(['flex', 'items-center'])}>Запас флагов: {flagAmmo}</div>
-        <Button title={'🔄'} className={`${status !== Status.NONE && 'bg-sky-300'}`} sound={config.sound['button']} callback={reftesh} />
+          <Button
+            title="↻"
+            className={
+              createClass([
+                'w-12',
+                'h-12',
+                'rounded-full',
+                'text-indigo-600',
+                'hover:text-indigo-300',
+                `${!!status && 'animate-spin'}`,
+              ])
+            }
+            sound={config.sound['button']}
+            callback={reftesh}
+            placeholder="refresh game"
+          />      
       </div>
       <Title value={status} />
     </div>
