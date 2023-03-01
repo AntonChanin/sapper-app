@@ -26,7 +26,8 @@ const Button: FC<Props> = (props) => {
         className,
         'p-2',
         'm-2',
-        'border-4 rounded-lg border-indigo-600',
+        'border-4',
+        'border-indigo-600',
         'hover:border-indigo-300',
       ])}
       onClick={handleClick}

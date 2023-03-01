@@ -15,10 +15,8 @@ import config from '../app.config';
 import createClass from '../utils/createClass';
 import getBigger from '../utils/getBigger';
 import getRandomInRange from '../utils/getRandomInRange';
-import uuid from '../utils/uuid';
 import useCanWin from '../hooks/useCanWin';
 import useSoundConfig from '../hooks/useSoundConfig';
-import useLeadBoard from '../hooks/useLeadBoard';
 import { Coord } from '../types/common';
 import { Status, Mask } from '../types/field';
 import { HandleClick, HandleMouseDown } from '../types/handlers';
@@ -53,17 +51,22 @@ const createField = (size: Coord, mineCount: number): number[] => {
   return field;
 };
 
-
 const Game: FC = () => {
-  const { difficulty, flagAmmo, changeFlagAmmo, refreshFlagAmmo, saveTimer, getTimer } = SapperStoreInstance;
-  const { size: { x, y }, mineCount } = config.difficultyRule[difficulty];
+  const {
+    difficulty = 'low',
+    flagAmmo,
+    changeFlagAmmo,
+    refreshFlagAmmo,
+    addLeaderToBoard,
+    saveTimer,
+    getTimer,
+  } = SapperStoreInstance;
+  const { size: { x = 3, y = 3 }, mineCount } = config.difficultyRule[difficulty];
   const bigger = getBigger(x, y);
   const dimension = new Array(y).fill(new Array(x).fill(null));
-  const [currentTime, setCurrentTime] = useState('0');
   const [status, setStatus] = useState<Status>(Status.NONE);
   const [field, setField] = useState(() => createField({ x, y }, mineCount));
   const [mask, setMask] = useState<Mask[]>(() => new Array(x * y).fill(FillModel.mask));
-
   const sounds = useSoundConfig(Object.keys(config.sound));
 
   const reftesh = () => {
@@ -74,9 +77,14 @@ const Game: FC = () => {
     refreshFlagAmmo();
     localStorage.setItem('difficulty', difficulty);
   }, [difficulty]);
-
-  useLeadBoard({ status, scope: currentTime });
   useCanWin({ field, target: MineModel.value, mask, callback: () => setStatus(Status.WIN) });
+
+  const TimerCallback = (props?: Record<string, string | number>) => {
+    addLeaderToBoard({
+      nickname: localStorage.getItem('nickname')
+        ?? 'incognito',  scope: `${props?.time}`
+    });
+  };
 
   const handleClick: HandleClick =
     ({ x, y }) => (e) => {
@@ -125,7 +133,7 @@ const Game: FC = () => {
           mask[y * bigger + x] = FillModel.mask;
           changeFlagAmmo(+1);
         };
-      }
+      };
       setMask((prev) => [...prev]);
     };
 
@@ -144,7 +152,7 @@ const Game: FC = () => {
       <div className={createClass(['flex', 'justify-around'])}>
         <TimerView
           model={getTimer()}
-          options={{ callback: (props) => setCurrentTime(`${props?.time}`), isStop: !!String(status) }}
+          options={{ callback: TimerCallback, isStop: !!String(status) }}
           saveToStore={(model) => saveTimer(model)}
         />
         <div className={createClass(['flex', 'items-center'])}>Запас флагов: {flagAmmo}</div>
@@ -154,10 +162,11 @@ const Game: FC = () => {
               createClass([
                 'w-12',
                 'h-12',
-                'rounded-full',
                 'text-indigo-600',
                 'hover:text-indigo-300',
-                `${!!status && 'animate-spin'}`,
+                'active:animate-bounce',
+                `${!!status && 'animate-spin rounded-full'}`,
+                `${!!status ? 'rounded-full' : 'rounded-lg'}`,
               ])
             }
             sound={config.sound['button']}

@@ -12,15 +12,14 @@ const Timer: FC<Props> = (props) => {
   const {
     initialMinute,
     initialSeconds,
-    seed,
+    time,
     change,
-    time: { instance },
     clearTimer,
     startTimer,
     updateParam,
   } = model;
-  const [ minutes, setMinutes ] = useState(model.time.minutes);
-  const [ seconds, setSeconds ] =  useState(model.time.seconds);
+  const [ minutes, setMinutes ] = useState(time.minutes);
+  const [ seconds, setSeconds ] =  useState(time.seconds);
 
   useEffect(() => {
     setMinutes(initialMinute);
