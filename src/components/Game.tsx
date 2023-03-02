@@ -2,18 +2,17 @@ import { FC, useEffect, useState } from 'react';
 import { observer } from 'mobx-react-lite';
 
 import SapperStoreInstance from '../store';
-import Field from './ui/Field';
 import Title from './ui/Title';
 import Button from './ui/Button';
+import FieldView from '../view/FieldView';
 import TimerView from '../view/TimerView';
 import FieldModel from '../model/field';
-import MineModel from '../model/mine';
 import config from '../app.config';
 import createClass from '../utils/createClass';
 import useCanWin from '../hooks/useCanWin';
 import useSoundConfig from '../hooks/useSoundConfig';
 import { Status, Mask } from '../types/field';
-import { HandleClick, HandleMouseDown } from '../types/handlers';
+import { Coord } from '../types/common';
 
 const Game: FC = () => {
   const {
@@ -42,7 +41,7 @@ const Game: FC = () => {
   const [mask, setMask] = useState<Mask[]>(model.mask);
   const [context, setContext] = useState(model.getCtx());
 
-  const reftesh = () => {
+  const refresh = () => {
     location.reload();
   };
 
@@ -64,33 +63,28 @@ const Game: FC = () => {
     });
   };
 
-  const handleClick: HandleClick =
-    ({ x, y }) => (e) => {
-      e.preventDefault();
+  const handleClick: (param: Coord) => () => void =
+    ({ x, y }) => () => {
       sounds['button']();
       model.actionStart({x, y}, status);
       setContext({ ...model.getCtx(), mask, });
     };
     
-  const handleMouseDown: HandleMouseDown =
-    ({ x, y }) => (e) => {
-      e.preventDefault();
-      if (e.button === 1) {
-        e.stopPropagation();
-        model.actionEnd({ x, y }, status, flagAmmo);
-      };
+  const handleMouseDown: (param: Coord) => () => void =
+    ({ x, y }) => () => {
+      model.actionEnd({ x, y }, status, flagAmmo);
     };
 
   const slotProps = {
-    onClick: handleClick,
-    onMouseDown: handleMouseDown,
+    clickCallback: handleClick,
+    mouseDownCallback: handleMouseDown,
     fillField: config.fillFunc,
     status,
   };
 
   return (
     <div className={createClass(['min-w-[300px]', 'w-[300px]', 'm-2'])}>
-      <Field dimension={dimension} slotProps={slotProps} ctx={context} />
+      <FieldView dimension={dimension} slotProps={slotProps} ctx={context} />
       <div className={createClass(['flex', 'justify-around'])}>
         <TimerView
           model={getTimer()}
@@ -112,7 +106,7 @@ const Game: FC = () => {
               ])
             }
             sound={config.sound['button']}
-            callback={reftesh}
+            callback={refresh}
             placeholder="refresh game"
           />      
       </div>

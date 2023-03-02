@@ -29,10 +29,10 @@ type FillCallback = (
     ctx: FillContext,
 ) => ReactNode;
 
-type FieldSlotProps<Click, MouseDown, FillFunc> = {
-    onClick: Click;
-    onMouseDown: MouseDown;
-    fillField: FillFunc;
+type FieldSlotProps<Callback, FillFunc> = {
+    clickCallback: Callback;
+    mouseDownCallback: Callback;
+    fillField?: FillFunc;
     status: Status;
 };
 
