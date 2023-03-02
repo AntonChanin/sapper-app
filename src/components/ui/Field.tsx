@@ -13,6 +13,8 @@ type Props = {
 const Field: FC<Props> = (props) => {
   const { dimension } = props;
 
+  console.log(props.ctx.mask);
+
   return (
       <div className='max-w-xs w-[300px] max-h-[320px] m-auto block overflow-auto'>
       {dimension.map((dimensionX, y) => (

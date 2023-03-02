@@ -1,11 +1,13 @@
 import { useEffect } from 'react';
 
-import { Mask } from '../types/field';
-import useSound from './useSound';
-import config from '../app.config';
 import FlagModel from '../model/flag';
 import SlotModel from '../model/slot';
 import FillModel from '../model/fill';
+import useSound from './useSound';
+import config from '../app.config';
+import { Mask, Status } from '../types/field';
+import MineModel from '../model/mine';
+import QuestionModel from '../model/question';
 
 type Props = {
   field: number[];
@@ -16,21 +18,23 @@ type Props = {
 
 const useCanWin = (props: Props) => {
   const { field, target, mask, callback } = props;
-  const applaySound = useSound(config.sound['win']);
+  const applaySound = useSound(config.sound[Status.WIN]);
   useEffect(
     () => {
-      if (
-        !field.map(
-          (f, i) => {
-            if (f === target) {
-              if (mask[i] === SlotModel.mask) return false;
-              return (mask[i] === FlagModel.mask || FillModel.mask);
-            } else {
-              return mask[i] === SlotModel.mask;
-            }
-          }
-        ).includes(false)
-      ) {
+      const checking = field.filter((f, i) => {
+        if (f === MineModel.value) {
+          return (
+            (
+              mask[i] === FillModel.mask
+              || FlagModel.mask
+              || QuestionModel.mask
+            ) && mask[i] !== MineModel.mask
+          );
+        } else {
+          return !(mask[i] === SlotModel.mask)
+        };
+      }).length;
+      if (checking === target) {
         callback();
         applaySound();
       };

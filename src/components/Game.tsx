@@ -6,50 +6,14 @@ import Field from './ui/Field';
 import Title from './ui/Title';
 import Button from './ui/Button';
 import TimerView from '../view/TimerView';
-import FillModel from '../model/fill';
-import FlagModel from '../model/flag';
+import FieldModel from '../model/field';
 import MineModel from '../model/mine';
-import QuestionModel from '../model/question';
-import SlotModel from '../model/slot';
 import config from '../app.config';
 import createClass from '../utils/createClass';
-import getBigger from '../utils/getBigger';
-import getRandomInRange from '../utils/getRandomInRange';
 import useCanWin from '../hooks/useCanWin';
 import useSoundConfig from '../hooks/useSoundConfig';
-import { Coord } from '../types/common';
 import { Status, Mask } from '../types/field';
 import { HandleClick, HandleMouseDown } from '../types/handlers';
-
-
-const createMines = (field: number[], mineCount: number, size: Coord) => {
-  const bigger = getBigger(size.x, size.y);
-  const incrementBorder = (x: number, y: number) => {
-    if (x >=0 && x < bigger && y >= 0 && y < bigger) {
-      if (field[y * bigger + x] === MineModel.value) return;
-      field[y * bigger  + x] += 1;
-    };
-  };
-  
-  for (let i = 0; i < mineCount;) {
-    const x = getRandomInRange(size.x);
-    const y = getRandomInRange(size.y);
-
-    if (field[y * bigger + x] === MineModel.value) continue;
-    field[y * bigger + x] = MineModel.value;
-    i += 1;
-    config.incrementRule
-      .forEach(
-        ({x: xConfig, y: yConfig }) => incrementBorder(x + xConfig, y + yConfig)
-      );
-  }
-};
-
-const createField = (size: Coord, mineCount: number): number[] => {
-  const field: number[] = new Array(size.x * size.y).fill(0);
-  createMines(field, mineCount, size);
-  return field;
-};
 
 const Game: FC = () => {
   const {
@@ -61,13 +25,22 @@ const Game: FC = () => {
     saveTimer,
     getTimer,
   } = SapperStoreInstance;
-  const { size: { x = 3, y = 3 }, mineCount } = config.difficultyRule[difficulty];
-  const bigger = getBigger(x, y);
-  const dimension = new Array(y).fill(new Array(x).fill(null));
-  const [status, setStatus] = useState<Status>(Status.NONE);
-  const [field, setField] = useState(() => createField({ x, y }, mineCount));
-  const [mask, setMask] = useState<Mask[]>(() => new Array(x * y).fill(FillModel.mask));
+  const { size, mineCount } = config.difficultyRule[difficulty];
   const sounds = useSoundConfig(Object.keys(config.sound));
+  const [status, setStatus] = useState<Status>(Status.NONE);
+  const [model, setModel] = useState<FieldModel>(
+    new FieldModel(
+      size,
+      mineCount,
+      (name) => sounds[name](),
+      (status) => setStatus(status),
+      (mask) => setMask(mask),
+      (count) => changeFlagAmmo(count),
+    )
+  );
+  const dimension = model.getDimension();
+  const [mask, setMask] = useState<Mask[]>(model.mask);
+  const [context, setContext] = useState(model.getCtx());
 
   const reftesh = () => {
     location.reload();
@@ -77,7 +50,12 @@ const Game: FC = () => {
     refreshFlagAmmo();
     localStorage.setItem('difficulty', difficulty);
   }, [difficulty]);
-  useCanWin({ field, target: MineModel.value, mask, callback: () => setStatus(Status.WIN) });
+  useCanWin({
+    field: context.field,
+    target: model.mineCount,
+    mask: [...context.mask],
+    callback: () => setStatus(Status.WIN),
+  });
 
   const TimerCallback = (props?: Record<string, string | number>) => {
     addLeaderToBoard({
@@ -90,51 +68,17 @@ const Game: FC = () => {
     ({ x, y }) => (e) => {
       e.preventDefault();
       sounds['button']();
-      if (status !== Status.NONE || mask[y * bigger + x] === FlagModel.mask) return;
-      if (mask[y * bigger + x] === SlotModel.mask) return;
-      const clearing: Coord[] = [];
-
-      const clear = (x: number, y: number) => {
-        if (x >=0 && x < bigger && y >= 0 && y < bigger) {
-          if (mask[y * bigger + x] === SlotModel.mask) return;
-          clearing.push({ x, y });
-        };
-      };
-
-      clear(x, y);
-      while(clearing.length) {
-        const { x, y } = clearing.pop()!!;
-        mask[y * bigger + x] = SlotModel.mask;
-
-        if (field[y * bigger + x] !== 0) continue;
-        config.clearRule.map(({ x: xConfig, y: yConfig }) => clear(x + xConfig, y + yConfig));
-      };
-      if (field[y * bigger + x] === MineModel.value) {
-        mask.forEach((_,i) => mask[i] = SlotModel.mask);
-        setStatus(Status.LOSE);
-        sounds['lose']();
-      }
-      setMask((prev) => [...prev]);
+      model.actionStart({x, y}, status);
+      setContext({ ...model.getCtx(), mask, });
     };
-
+    
   const handleMouseDown: HandleMouseDown =
     ({ x, y }) => (e) => {
       e.preventDefault();
       if (e.button === 1) {
         e.stopPropagation();
-        if (status !== Status.NONE) return;
-        if (mask[y * bigger + x] === SlotModel.mask) return;
-        if (mask[y * bigger + x] === FillModel.mask && flagAmmo > 0) {
-          mask[y * bigger + x] = FlagModel.mask;
-          changeFlagAmmo(-1);
-        } else if (mask[y * bigger + x] === FlagModel.mask) {
-          mask[y * bigger + x] = QuestionModel.mask;
-        } else if (mask[y * bigger + x] === QuestionModel.mask) {
-          mask[y * bigger + x] = FillModel.mask;
-          changeFlagAmmo(+1);
-        };
+        model.actionEnd({ x, y }, status, flagAmmo);
       };
-      setMask((prev) => [...prev]);
     };
 
   const slotProps = {
@@ -144,10 +88,8 @@ const Game: FC = () => {
     status,
   };
 
-  const context = { mask, field, size: bigger, target: MineModel.value };
-
   return (
-    <div className={createClass(['min-w-[300px]', 'w-[300px]'])}>
+    <div className={createClass(['min-w-[300px]', 'w-[300px]', 'm-2'])}>
       <Field dimension={dimension} slotProps={slotProps} ctx={context} />
       <div className={createClass(['flex', 'justify-around'])}>
         <TimerView
