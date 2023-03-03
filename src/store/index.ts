@@ -46,6 +46,7 @@ class SapperStore {
 
   changeFlagAmmo = (change: number) => {
     this.flagAmmo += change;
+    this.flagAmmo = Math.round(this.flagAmmo);
   };
 
   changeNickname = (change: string) => {

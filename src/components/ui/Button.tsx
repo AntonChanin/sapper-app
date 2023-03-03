@@ -1,6 +1,6 @@
 import { FC, MouseEventHandler, useState } from 'react';
-import useSound from '../../hooks/useSound';
 
+import useSound from '../../hooks/useSound';
 import createClass from '../../utils/createClass';
 
 type Props = {

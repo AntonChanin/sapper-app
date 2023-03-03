@@ -14,6 +14,8 @@ type Props = {
 
 const Field: FC<Props> = (props) => {
   const { dimension, slotProps, ctx } = props;
+  const { mask } = ctx;
+  const maskRefresh = [...mask];
 
   return (
     <div
@@ -40,7 +42,7 @@ const Field: FC<Props> = (props) => {
                 fillField: undefined,
               }}
             >{
-              slotProps.fillField?.({ x, y }, ctx)
+              slotProps.fillField?.({ x, y }, {...ctx, mask: maskRefresh})
             }</Slot>
           ))}
         </Row>

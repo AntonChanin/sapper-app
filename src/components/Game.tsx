@@ -67,7 +67,7 @@ const Game: FC = () => {
     ({ x, y }) => () => {
       sounds['button']();
       model.actionStart({x, y}, status);
-      setContext({ ...model.getCtx(), mask, });
+      setContext({ ...model.getCtx(), mask });
     };
     
   const handleMouseDown: (param: Coord) => () => void =

@@ -73,9 +73,10 @@ class Field {
       this.__setFlagCount(-1);
     } else if (this.mask[y * this.__higher + x] === FlagModel.mask) {
       this.mask[y * this.__higher + x] = QuestionModel.mask;
+      this.__setFlagCount(1);
     } else if (this.mask[y * this.__higher + x] === QuestionModel.mask) {
       this.mask[y * this.__higher + x] = FillModel.mask;
-      this.__setFlagCount(+1);
+      this.__setFlagCount(0.000001);
     };
     this.__setMask(this.mask);
   };
