@@ -3,11 +3,11 @@ import { useEffect } from 'react';
 import FlagModel from '../model/flag';
 import SlotModel from '../model/slot';
 import FillModel from '../model/fill';
+import MineModel from '../model/mine';
+import QuestionModel from '../model/question';
 import useSound from './useSound';
 import config from '../app.config';
 import { Mask, Status } from '../types/field';
-import MineModel from '../model/mine';
-import QuestionModel from '../model/question';
 
 type Props = {
   field: number[];
