@@ -5,6 +5,7 @@ import Timer from '../model/timer';
 import { LeadRecord } from '../types/leadBoard';
 
 class SapperStore {
+  fullFildMod = localStorage.getItem('fullFildMod') ?? false;
   timer: Timer | null = null
   difficulty = localStorage.getItem('difficulty') ?? 'low';
   flagAmmo = config.difficultyRule[this.difficulty].mineCount ?? 0;
@@ -17,6 +18,7 @@ class SapperStore {
   constructor() {
     makeObservable(this, {
       difficulty: observable,
+      fullFildMod: observable,
       flagAmmo: observable,
       top: observable,
       leaderBoard: observable,
@@ -29,6 +31,7 @@ class SapperStore {
       refreshFlagAmmo: action.bound,
       saveTimer: action.bound,
       getTimer: action.bound,
+      setFullFildMod: action.bound,
     });
   };
   
@@ -37,12 +40,12 @@ class SapperStore {
       this.leaderBoard.push(record);
       this.leaderBoard.sort((a, b) => config.leadBoard.sort(a, b));
       localStorage.setItem('leaderBoard', JSON.stringify(this.leaderBoard));
-    } 
-  }
+    }; 
+  };
 
   changeDifficulty = (newDifficulty: string) => {
     this.difficulty = newDifficulty;
-  }
+  };
 
   changeFlagAmmo = (change: number) => {
     this.flagAmmo += change;
@@ -64,6 +67,10 @@ class SapperStore {
   
   getTimer() {
     return this.timer;
+  };
+
+  setFullFildMod(newMod: boolean) {
+    this.fullFildMod = newMod;
   }
 };
 

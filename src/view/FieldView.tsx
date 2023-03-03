@@ -10,29 +10,28 @@ type Props = {
   dimension: number[][];
   slotProps: FieldSlotProps<(param: Coord) => () => void, FillCallback>;
   ctx: FillContext;
+  fullField?: boolean;
 };
 
 const Field: FC<Props> = (props) => {
-  const { dimension, slotProps, ctx } = props;
+  const { dimension, slotProps, ctx, fullField = false } = props;
   const { mask } = ctx;
-  const maskRefresh = [...mask];
 
   return (
     <div
       className={
         createClass([
-          'max-w-xs',
-          'w-[300px]',
-          'max-h-[320px]',
           'm-auto',
           'block',
-          'overflow-auto',
+          !fullField ? 'w-[300px]' : `w-[${40 * dimension[0].length}px]`,
+          !fullField ? 'overflow-auto' : `h-[${40 * dimension.length}px]`,
+          !fullField ? 'max-w-xs max-h-[320px]' : '',
         ])
       }
     >
-      {dimension.map((_, y) => (
+      {dimension.map((row, y) => (
         <Row key={y}>
-          {dimension.map((_, x) => (
+          {row.map((_, x) => (
             <Slot
               key={x}
               {...{
@@ -42,7 +41,7 @@ const Field: FC<Props> = (props) => {
                 fillField: undefined,
               }}
             >{
-              slotProps.fillField?.({ x, y }, {...ctx, mask: maskRefresh})
+              slotProps.fillField?.({ x, y }, {...ctx, mask }) 
             }</Slot>
           ))}
         </Row>

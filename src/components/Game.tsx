@@ -18,6 +18,7 @@ const Game: FC = () => {
   const {
     difficulty = 'low',
     flagAmmo,
+    fullFildMod,
     changeFlagAmmo,
     refreshFlagAmmo,
     addLeaderToBoard,
@@ -37,7 +38,6 @@ const Game: FC = () => {
       (count) => changeFlagAmmo(count),
     )
   );
-  const dimension = model.getDimension();
   const [mask, setMask] = useState<Mask[]>(model.mask);
   const [context, setContext] = useState(model.getCtx());
 
@@ -83,32 +83,40 @@ const Game: FC = () => {
   };
 
   return (
-    <div className={createClass(['min-w-[300px]', 'w-[300px]', 'm-2'])}>
-      <FieldView dimension={dimension} slotProps={slotProps} ctx={context} />
+    <div className={createClass([!fullFildMod ? 'min-w-[300px] w-[300px] m-2' : ''])}>
+      <FieldView
+        dimension={model.getDimension()}
+        slotProps={slotProps}
+        ctx={context}
+        fullField={fullFildMod}
+      />
       <div className={createClass(['flex', 'justify-around'])}>
         <TimerView
           model={getTimer()}
           options={{ callback: TimerCallback, isStop: !!String(status) }}
           saveToStore={(model) => saveTimer(model)}
         />
-        <div className={createClass(['flex', 'items-center'])}>Запас флагов: {flagAmmo}</div>
-          <Button
-            title="↻"
-            className={
-              createClass([
-                'w-12',
-                'h-12',
-                'text-indigo-600',
-                'hover:text-indigo-300',
-                'active:animate-bounce',
-                `${!!status && 'animate-spin rounded-full'}`,
-                `${!!status ? 'rounded-full' : 'rounded-lg'}`,
-              ])
-            }
-            sound={config.sound['button']}
-            callback={refresh}
-            placeholder="refresh game"
-          />      
+        <div className={createClass(['flex', 'items-center'])}>
+          Запас флагов: {flagAmmo}
+        </div>
+        <Button
+          title="↻"
+          className={
+            createClass([
+              'w-12',
+              'h-12',
+              'text-indigo-600',
+              'hover:text-indigo-300',
+              'bg-white',
+              'active:animate-bounce',
+              `${!!status && 'animate-spin rounded-full'}`,
+              `${!!status ? 'rounded-full' : 'rounded-lg'}`,
+            ])
+          }
+          sound={config.sound['button']}
+          callback={refresh}
+          placeholder="refresh game"
+        />      
       </div>
       <Title value={status} />
     </div>

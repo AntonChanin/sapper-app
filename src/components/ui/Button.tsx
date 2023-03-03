@@ -1,4 +1,4 @@
-import { FC, MouseEventHandler, useState } from 'react';
+import { FC, MouseEventHandler } from 'react';
 
 import useSound from '../../hooks/useSound';
 import createClass from '../../utils/createClass';
@@ -18,7 +18,7 @@ const Button: FC<Props> = (props) => {
     e.preventDefault();
     sound && useSound(sound)();
     e && callback?.();
-  }
+  };
 
   return (
     <button

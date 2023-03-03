@@ -11,13 +11,15 @@ import useDifficulty from '../hooks/useDifficulty';
 import clamp from '../utils/clamp';
 import getLower from '../utils/getLower';
 import getRandomInRange from '../utils/getRandomInRange';
+import Checkbox from './ui/Checkbox';
 
 
 const Setting: FC = () => {
   const difficulty = useDifficulty();
-  const { difficulty: current, nickname, changeDifficulty, changeNickname, } = SapperStoreInstance;
+  const { difficulty: current, nickname, changeDifficulty, changeNickname, setFullFildMod } = SapperStoreInstance;
   const [currentDifficulty, setCurrentDifficulty] = useState(config.difficultyRule[current]);
-  const [custom, setCustom ] = useState(config.difficultyRule['custom'])
+  const [custom, setCustom ] = useState(config.difficultyRule['custom']);
+  const [checked, setChecked] = useState(false);
   const { mineCount, size: { x = 3, y = 3 } } = currentDifficulty;
   const icon = ['♿', '🗡️', '⚔️', '✨'];
 
@@ -25,10 +27,16 @@ const Setting: FC = () => {
     localStorage.setItem('customDifficulty', JSON.stringify(custom));
   }, [custom]);
 
+  const setFullFild = () => {
+    setChecked(!checked);
+    setFullFildMod(checked);
+    localStorage.setItem('fullFildMod', `${checked}`);
+  };
+
   const makeRandomParam = () => {
     const x = clamp(getRandomInRange(64), 3, 64);
     const y = clamp(getRandomInRange(64), 3, x);
-    custom.size = { x, y, };
+    custom.size = { x, y };
     custom.mineCount = clamp(getRandomInRange(custom.size.x * 4), 3, 255);
     setCustom(prev => ({ ...prev }));
     config.difficultyRule['custom'] = custom;
@@ -76,7 +84,7 @@ const Setting: FC = () => {
       sound={config.sound['input']}
       callback={updateNickname}
     />
-    <div  className={createClass(['flex', 'flex-col'])}>
+    <div className={createClass(['flex', 'flex-col'])}>
       <b>Звуки 🎶:</b>
       {Object.keys(config.sound).map((name) => (
         <Input
@@ -97,6 +105,14 @@ const Setting: FC = () => {
     <div className={createClass(['flex', 'flex-row', 'justify-between', 'items-center','mb-2'])}>
       <b>Число мин: </b>{mineCount}
     </div>
+    <Checkbox
+      className={createClass(['justify-between'])}
+      reverse={true}
+      title={<b>Полноразмерное поле:</b>}
+      value={checked}
+      sound={config.sound['button']}
+      callback={setFullFild}
+    />
     <b className={createClass(['flex'])}>Уровень сложнасти: </b>
     <div className={createClass(['flex', 'flex-row', 'justify-between', 'items-center', 'flex-col'])}>  
       {difficulty.map((name, index) => <Button
@@ -116,7 +132,7 @@ const Setting: FC = () => {
        <Button
         key={uuid()}
         title="reset 🔄"
-        className={createClass([`${current === 'random' && 'border-double'}`, 'w-52', 'active:animate-bounce'])}
+        className={createClass(['w-52', 'active:animate-bounce'])}
         sound={config.sound['button']}
         callback={resetStore}
       />

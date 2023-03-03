@@ -3,7 +3,7 @@ import { FillCallback, Mask } from './types/field';
 
 const custom = JSON.parse(
   localStorage.getItem('customDifficulty')
-    ?? '{ "size": { "x": 8, "x": 8 }, "mineCount": 4 }'
+    ?? '{ "size": { "x": 8, "y": 8 }, "mineCount": 4 }'
 );
 
 const config: Config<FillCallback> = {
