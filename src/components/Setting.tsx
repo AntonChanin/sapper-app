@@ -4,6 +4,7 @@ import { observer } from 'mobx-react-lite';
 import SapperStoreInstance from '../store';
 import Button from './ui/Button';
 import Input from './ui/Input';
+import Checkbox from './ui/Checkbox';
 import config from '../app.config';
 import createClass from '../utils/createClass';
 import uuid from '../utils/uuid';
@@ -11,14 +12,12 @@ import useDifficulty from '../hooks/useDifficulty';
 import clamp from '../utils/clamp';
 import getLower from '../utils/getLower';
 import getRandomInRange from '../utils/getRandomInRange';
-import Checkbox from './ui/Checkbox';
-
 
 const Setting: FC = () => {
   const difficulty = useDifficulty();
-  const { difficulty: current, nickname, changeDifficulty, changeNickname, setFullFildMod } = SapperStoreInstance;
-  const [currentDifficulty, setCurrentDifficulty] = useState(config.difficultyRule[current]);
-  const [custom, setCustom ] = useState(config.difficultyRule['custom']);
+  const { nickname, changeDifficulty, changeNickname, setFullFildMod } = SapperStoreInstance;
+  const [currentDifficulty, setCurrentDifficulty] = useState(config.difficultyRule[SapperStoreInstance.difficulty]);
+  const [custom, setCustom] = useState(config.difficultyRule['custom']);
   const [checked, setChecked] = useState(false);
   const { mineCount, size: { x = 3, y = 3 } } = currentDifficulty;
   const icon = ['♿', '🗡️', '⚔️', '✨'];
@@ -45,13 +44,13 @@ const Setting: FC = () => {
 
   const updateDifficulty = (value: string) => () => {
     changeDifficulty(value);
-    setCurrentDifficulty(config.difficultyRule[current]);
+    setCurrentDifficulty(config.difficultyRule[SapperStoreInstance.difficulty]);
   };
 
-  const rollRandom = (value: string) => () => {
+  const rollRandom = () => {
     makeRandomParam();
     changeDifficulty('custom');
-  }
+  };
 
   const updateNickname  = (value: string) => {
     changeNickname(value);
@@ -78,25 +77,27 @@ const Setting: FC = () => {
 
   return (<div className={createClass(['flex', 'flex-col', 'm-2', 'max-w-xs', 'min-w-[300px]', 'w-[300px]', 'h-fit'])}>
     <Input
-      label={<b>Имя игрока 🤪:</b>}
+      label={<b>Имя игрока 🤪</b>}
       className={createClass(['w-40', 'mb-2'])}
       value={nickname}
       sound={config.sound['input']}
       callback={updateNickname}
     />
     <div className={createClass(['flex', 'flex-col'])}>
-      <b>Звуки 🎶:</b>
-      {Object.keys(config.sound).map((name) => (
-        <Input
-          key={uuid()}
-          type="text"
-          label={<b>Звук '{name}'</b>}
-          className={createClass(['w-40', 'mb-2'])}
-          placeholder={config.sound[name]}
-          sound={config.sound['input']}
-          callback={(value) => config.sound[name] = value}
-        />
-      ))}
+      <b>Звуки 🎶</b>
+      {Object.keys(config.sound).map(
+        (name) => (
+          <Input
+            key={uuid()}
+            type="text"
+            label={<b>Звук '{name}'</b>}
+            className={createClass(['w-40', 'mb-2'])}
+            placeholder={config.sound[name]}
+            sound={config.sound['input']}
+            callback={(value) => config.sound[name] = value}
+          />
+        )
+      )}
     </div>
     <h2 className={createClass(['text-xl', 'font-bold'])}>Подробности сложнасти 😱</h2>
     <div className={createClass(['flex', 'flex-row', 'justify-between', 'items-center', 'mb-2'])}>
@@ -115,19 +116,23 @@ const Setting: FC = () => {
     />
     <b className={createClass(['flex'])}>Уровень сложнасти: </b>
     <div className={createClass(['flex', 'flex-row', 'justify-between', 'items-center', 'flex-col'])}>  
-      {difficulty.map((name, index) => <Button
-        key={uuid()}
-        title={`${name}  ${icon[index]}`}
-        className={createClass([`${current === name && 'border-double'}`, 'w-52', 'active:animate-bounce'])}
-        sound={config.sound['button']}
-        callback={updateDifficulty(name)}
-      />)}
+      {difficulty.map(
+        (name, index) => (
+          <Button
+            key={uuid()}
+            title={`${name} ${icon[index]}`}
+            className={createClass([`${SapperStoreInstance.difficulty === name && 'border-double'}`, 'w-52', 'active:animate-bounce'])}
+            sound={config.sound['button']}
+            callback={updateDifficulty(name)}
+          />
+        )
+      )}
       <Button
         key={uuid()}
         title="random 🎲"
-        className={createClass([`${current === 'random' && 'border-double'}`, 'w-52', 'active:animate-bounce'])}
+        className={createClass([`${SapperStoreInstance.difficulty === 'random' && 'border-double'}`, 'w-52', 'active:animate-bounce'])}
         sound={config.sound['button']}
-        callback={rollRandom('random')}
+        callback={rollRandom}
       />
        <Button
         key={uuid()}
@@ -137,7 +142,7 @@ const Setting: FC = () => {
         callback={resetStore}
       />
     </div>
-    <div className={createClass(['flex', 'flex-col'])}>{current === 'custom' && (<>
+    <div className={createClass(['flex', 'flex-col'])}>{SapperStoreInstance.difficulty === 'custom' && (<>
       <b>Размер поля:</b>
       <Input
         type="number"
