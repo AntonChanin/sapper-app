@@ -26,7 +26,7 @@ const Game: FC = () => {
     getTimer,
   } = SapperStoreInstance;
   const { size, mineCount } = config.difficultyRule[difficulty];
-  const sounds = useSoundConfig(Object.keys(config.sound));
+  const sounds = useSoundConfig(!SapperStoreInstance.isMuteSoundMod ? Object.keys(config.sound) : []);
   const [status, setStatus] = useState<Status>(Status.NONE);
   const [model, setModel] = useState<FieldModel>(
     new FieldModel(
@@ -65,7 +65,7 @@ const Game: FC = () => {
 
   const handleClick: (param: Coord) => () => void =
     ({ x, y }) => () => {
-      sounds['button']();
+      !SapperStoreInstance.isMuteSoundMod && sounds['button']();
       model.actionStart({x, y}, status);
       setContext({ ...model.getCtx(), mask });
     };
@@ -88,7 +88,7 @@ const Game: FC = () => {
         dimension={model.getDimension()}
         slotProps={slotProps}
         ctx={context}
-        fullField={fullFildMod}
+        fullField={!!fullFildMod}
       />
       <div className={createClass(['flex', 'justify-around'])}>
         <TimerView
@@ -113,7 +113,7 @@ const Game: FC = () => {
               `${!!status ? 'rounded-full' : 'rounded-lg'}`,
             ])
           }
-          sound={config.sound['button']}
+          sound={!SapperStoreInstance.isMuteSoundMod ? config.sound['button'] : ''}
           callback={refresh}
           placeholder="refresh game"
         />      

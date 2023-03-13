@@ -15,10 +15,11 @@ import getRandomInRange from '../utils/getRandomInRange';
 
 const Setting: FC = () => {
   const difficulty = useDifficulty();
-  const { nickname, changeDifficulty, changeNickname, setFullFildMod } = SapperStoreInstance;
+  const { nickname, changeDifficulty, changeNickname, setFullFildMod, setIsMuteSoundMod } = SapperStoreInstance;
   const [currentDifficulty, setCurrentDifficulty] = useState(config.difficultyRule[SapperStoreInstance.difficulty]);
   const [custom, setCustom] = useState(config.difficultyRule['custom']);
-  const [checked, setChecked] = useState(false);
+  const [checked, setChecked] = useState(!!localStorage.getItem('fullFildMod') ?? false);
+  const [isMuteSound, setIsMuteSound] = useState(!!localStorage.getItem('muteSound') ?? false);
   const { mineCount, size: { x = 3, y = 3 } } = currentDifficulty;
   const icon = ['♿', '🗡️', '⚔️', '✨'];
 
@@ -29,7 +30,13 @@ const Setting: FC = () => {
   const setFullFild = () => {
     setChecked(!checked);
     setFullFildMod(checked);
-    localStorage.setItem('fullFildMod', `${checked}`);
+    localStorage.setItem('muteSound', `${checked ? checked : ''}`);
+  };
+
+  const setMuteSound = () => {
+    setIsMuteSound(!isMuteSound);
+    setIsMuteSoundMod(isMuteSound);
+    localStorage.setItem('muteSound', `${isMuteSound ? isMuteSound : ''}`);
   };
 
   const makeRandomParam = () => {
@@ -75,102 +82,160 @@ const Setting: FC = () => {
     setCurrentDifficulty(custom);
   };
 
-  return (<div className={createClass(['flex', 'flex-col', 'm-2', 'max-w-xs', 'min-w-[300px]', 'w-[300px]', 'h-fit'])}>
-    <Input
-      label={<b>Имя игрока 🤪</b>}
-      className={createClass(['w-40', 'mb-2'])}
-      value={nickname}
-      sound={config.sound['input']}
-      callback={updateNickname}
-    />
-    <div className={createClass(['flex', 'flex-col'])}>
-      <b>Звуки 🎶</b>
-      {Object.keys(config.sound).map(
-        (name) => (
-          <Input
-            key={uuid()}
-            type="text"
-            label={<b>Звук '{name}'</b>}
-            className={createClass(['w-40', 'mb-2'])}
-            placeholder={config.sound[name]}
-            sound={config.sound['input']}
-            callback={(value) => config.sound[name] = value}
-          />
-        )
-      )}
-    </div>
-    <h2 className={createClass(['text-xl', 'font-bold'])}>Подробности сложнасти 😱</h2>
-    <div className={createClass(['flex', 'flex-row', 'justify-between', 'items-center', 'mb-2'])}>
-      <b>Размер поля: </b>{x} x {y}
-    </div>
-    <div className={createClass(['flex', 'flex-row', 'justify-between', 'items-center','mb-2'])}>
-      <b>Число мин: </b>{mineCount}
-    </div>
-    <Checkbox
-      className={createClass(['justify-between'])}
-      reverse={true}
-      title={<b>Полноразмерное поле:</b>}
-      value={checked}
-      sound={config.sound['button']}
-      callback={setFullFild}
-    />
-    <b className={createClass(['flex'])}>Уровень сложнасти: </b>
-    <div className={createClass(['flex', 'flex-row', 'justify-between', 'items-center', 'flex-col'])}>  
-      {difficulty.map(
-        (name, index) => (
-          <Button
-            key={uuid()}
-            title={`${name} ${icon[index]}`}
-            className={createClass([`${SapperStoreInstance.difficulty === name && 'border-double'}`, 'w-52', 'active:animate-bounce'])}
-            sound={config.sound['button']}
-            callback={updateDifficulty(name)}
-          />
-        )
-      )}
-      <Button
-        key={uuid()}
-        title="random 🎲"
-        className={createClass([`${SapperStoreInstance.difficulty === 'random' && 'border-double'}`, 'w-52', 'active:animate-bounce'])}
-        sound={config.sound['button']}
-        callback={rollRandom}
-      />
-       <Button
-        key={uuid()}
-        title="reset 🔄"
-        className={createClass(['w-52', 'active:animate-bounce'])}
-        sound={config.sound['button']}
-        callback={resetStore}
-      />
-    </div>
-    <div className={createClass(['flex', 'flex-col'])}>{SapperStoreInstance.difficulty === 'custom' && (<>
-      <b>Размер поля:</b>
+  return (
+    <div
+      className={
+        createClass([
+          'flex',
+          'flex-col',
+          'm-2',
+          'max-w-xs',
+          'min-w-[300px]',
+          'w-[300px]',
+          'h-fit',
+        ])
+      }
+    >
       <Input
-        type="number"
-        label={<b>По X</b>}
-        className="w-40 mb-2"
-        value={custom.size.x}
-        sound={config.sound['input']}
-        callback={updateCustomDifficulty('x')}
+        label={<b>Имя игрока 🤪</b>}
+        className={createClass(['w-40', 'mb-2'])}
+        value={nickname}
+        sound={!SapperStoreInstance.isMuteSoundMod ? config.sound['input'] : ''}
+        callback={updateNickname}
       />
-      <Input
-        type="number"
-        label={<b>По Y</b>}
-        className="w-40"
-        value={custom.size.y}
-        sound={config.sound['input']}
-        callback={updateCustomDifficulty('y')}
+      <div className={createClass(['flex', 'flex-col'])}>
+        <b>Звуки 🎶</b>
+        {Object.keys(config.sound).map(
+          (name) => (
+            <Input
+              key={uuid()}
+              type="text"
+              label={<b>Звук '{name}'</b>}
+              className={createClass(['w-40', 'mb-2'])}
+              placeholder={config.sound[name]}
+              sound={!isMuteSound ? config.sound['input'] : ''}
+              callback={(value) => config.sound[name] = value}
+            />
+          )
+        )}
+        <Checkbox
+          className={createClass(['justify-between'])}
+          reverse={true}
+          title={<b>Выключить звук:</b>}
+          value={isMuteSound}
+          sound={!isMuteSound ? config.sound['button'] : ''}
+          callback={setMuteSound}
+        />
+      </div>
+      <h2 className={createClass(['text-xl', 'font-bold'])}>Подробности сложнасти 😱</h2>
+      <div
+        className={
+          createClass([
+            'flex',
+            'flex-row',
+            'justify-between',
+            'items-center',
+            'mb-2'
+          ])
+        }
+      >
+        <b>Размер поля: </b>{x} x {y}
+      </div>
+      <div className={createClass(['flex', 'flex-row', 'justify-between', 'items-center','mb-2'])}>
+        <b>Число мин: </b>{mineCount}
+      </div>
+      <Checkbox
+        className={createClass(['justify-between'])}
+        reverse={true}
+        title={<b>Полноразмерное поле:</b>}
+        value={checked}
+        sound={!SapperStoreInstance.isMuteSoundMod ? config.sound['button'] : ''}
+        callback={setFullFild}
       />
-      <br />
-      <Input
-        type="number"
-        label={<b>Количество мин</b>}
-        className="w-40"
-        value={custom.mineCount > 0 ? custom.mineCount : 1}
-        sound={config.sound['input']}
-        callback={updateCustomDifficulty('mineCount')}
-      />
-    </>)}</div>
-  </div>);
+      <b className={createClass(['flex'])}>Уровень сложнасти: </b>
+      <div
+        className={
+          createClass([
+            'flex',
+            'flex-row',
+            'justify-between',
+            'items-center',
+            'flex-col',
+          ])
+        }
+      >  
+        {difficulty.map(
+          (name, index) => (
+            <Button
+              key={uuid()}
+              title={`${name} ${icon[index]}`}
+              className={
+                createClass([
+                  `${SapperStoreInstance.difficulty === name && 'border-double'}`,
+                  'w-52',
+                  'active:animate-bounce',
+                ])
+              }
+              sound={!SapperStoreInstance.isMuteSoundMod ? config.sound['button'] : ''}
+              callback={updateDifficulty(name)}
+            />
+          )
+        )}
+        <Button
+          key={uuid()}
+          title="random 🎲"
+          className={
+            createClass([
+              `${SapperStoreInstance.difficulty === 'random' && 'border-double'}`,
+              'w-52',
+              'active:animate-bounce',
+            ])
+          }
+          sound={!SapperStoreInstance.isMuteSoundMod ? config.sound['button'] : ''}
+          callback={rollRandom}
+        />
+        <Button
+          key={uuid()}
+          title="reset 🔄"
+          className={createClass(['w-52', 'active:animate-bounce'])}
+          sound={!SapperStoreInstance.isMuteSoundMod ? config.sound['button'] : ''}
+          callback={resetStore}
+        />
+      </div>
+      <div className={createClass(['flex', 'flex-col'])}>
+        {SapperStoreInstance.difficulty === 'custom' && (
+          <>
+            <b>Размер поля:</b>
+            <Input
+              type="number"
+              label={<b>По X</b>}
+              className="w-40 mb-2"
+              value={custom.size.x}
+              sound={!SapperStoreInstance.isMuteSoundMod ? config.sound['input'] : ''}
+              callback={updateCustomDifficulty('x')}
+            />
+            <Input
+              type="number"
+              label={<b>По Y</b>}
+              className="w-40"
+              value={custom.size.y}
+              sound={!SapperStoreInstance.isMuteSoundMod ? config.sound['input'] : ''}
+              callback={updateCustomDifficulty('y')}
+            />
+            <br />
+            <Input
+              type="number"
+              label={<b>Количество мин</b>}
+              className="w-40"
+              value={custom.mineCount > 0 ? custom.mineCount : 1}
+              sound={!SapperStoreInstance.isMuteSoundMod ?  config.sound['input'] : ''}
+              callback={updateCustomDifficulty('mineCount')}
+            />
+          </>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default observer(Setting);

@@ -1,13 +1,14 @@
 import React, { FC, MouseEventHandler } from 'react';
 import { Link } from 'react-router-dom';
 
+import SapperStoreInstance from '../store';
 import config from '../app.config';
 import createClass from '../utils/createClass';
 import useSound from '../hooks/useSound';
 
 const Navigation: FC = () => {
   const handleClick: MouseEventHandler<HTMLAnchorElement> = (e) => {
-    useSound(config.sound['button'])();
+    !SapperStoreInstance.isMuteSoundMod && useSound(config.sound['button'])();
   };
 
   return (

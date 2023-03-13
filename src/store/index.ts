@@ -6,6 +6,7 @@ import { LeadRecord } from '../types/leadBoard';
 
 class SapperStore {
   fullFildMod = localStorage.getItem('fullFildMod') ?? false;
+  isMuteSoundMod = localStorage.getItem('muteSound') ?? false;
   timer: Timer | null = null
   difficulty = localStorage.getItem('difficulty') ?? 'low';
   flagAmmo = config.difficultyRule[this.difficulty].mineCount ?? 0;
@@ -19,6 +20,7 @@ class SapperStore {
     makeObservable(this, {
       difficulty: observable,
       fullFildMod: observable,
+      isMuteSoundMod: observable,
       flagAmmo: observable,
       top: observable,
       leaderBoard: observable,
@@ -32,6 +34,7 @@ class SapperStore {
       saveTimer: action.bound,
       getTimer: action.bound,
       setFullFildMod: action.bound,
+      setIsMuteSoundMod: action.bound,
     });
   };
   
@@ -71,7 +74,11 @@ class SapperStore {
 
   setFullFildMod(newMod: boolean) {
     this.fullFildMod = newMod;
-  }
+  };
+
+  setIsMuteSoundMod(newMod: boolean) {
+    this.isMuteSoundMod = newMod;
+  };
 };
 
 const SapperStoreInstance = new SapperStore();
