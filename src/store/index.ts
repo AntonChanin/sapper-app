@@ -1,20 +1,18 @@
-import { action, computed, makeObservable, observable } from 'mobx';
+import { action, makeObservable, observable } from 'mobx';
 
 import config from '../app.config';
+import LeaderBoardModel from '../model/leadBoard';
 import Timer from '../model/timer';
 import { LeadRecord } from '../types/leadBoard';
 
 class SapperStore {
   fullFildMod = localStorage.getItem('fullFildMod') ?? false;
   isMuteSoundMod = localStorage.getItem('muteSound') ?? false;
-  timer: Timer | null = null
   difficulty = localStorage.getItem('difficulty') ?? 'low';
-  flagAmmo = config.difficultyRule[this.difficulty].mineCount ?? 0;
-  top = config.leadBoard.top;
-  leaderBoard: LeadRecord[] = [
-    ...JSON.parse(localStorage.getItem('leaderBoard') ?? '[]')
-  ].filter((_, index) => index < this.top);
   nickname = localStorage.getItem('nickname') ?? 'incognito';
+  timer: Timer | null = null;
+  leaderBoard = new LeaderBoardModel();
+  flagAmmo = config.difficultyRule[this.difficulty].mineCount ?? 0;
 
   constructor() {
     makeObservable(this, {
@@ -22,7 +20,6 @@ class SapperStore {
       fullFildMod: observable,
       isMuteSoundMod: observable,
       flagAmmo: observable,
-      top: observable,
       leaderBoard: observable,
       nickname: observable,
       timer: observable,
@@ -39,11 +36,7 @@ class SapperStore {
   };
   
   addLeaderToBoard = (record: LeadRecord) => {
-    if (+record.scope + 1) {
-      this.leaderBoard.push(record);
-      this.leaderBoard.sort((a, b) => config.leadBoard.sort(a, b));
-      localStorage.setItem('leaderBoard', JSON.stringify(this.leaderBoard));
-    }; 
+    this.leaderBoard.addLeaderToBoard(record);
   };
 
   changeDifficulty = (newDifficulty: string) => {

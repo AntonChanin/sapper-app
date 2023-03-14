@@ -7,12 +7,12 @@ import createClass from '../utils/createClass';
 import uuid from '../utils/uuid';
 
 const LeaderBoard: FC = () => {
-  const { leaderBoard } = SapperStoreInstance;
+  const { leaderBoard: { self } } = SapperStoreInstance;
 
   return (
     <div className={createClass([ 'min-w-[300px]', 'w-[300px]', 'm-auto'])}>
       <b>Таблица лидеров:</b>
-      {leaderBoard.map(({ nickname, scope }) => (
+      {self.map(({ nickname, scope }) => (
         <div key={uuid()} className={createClass([ 'flex', 'justify-between', 'border-b-2'])}>
           <b>{nickname}</b>{
             typeof config.leadBoard.scopeView === 'function'
