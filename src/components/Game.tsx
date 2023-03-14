@@ -28,6 +28,7 @@ const Game: FC = () => {
   const { size, mineCount } = config.difficultyRule[difficulty];
   const sounds = useSoundConfig(!SapperStoreInstance.isMuteSoundMod ? Object.keys(config.sound) : []);
   const [status, setStatus] = useState<Status>(Status.NONE);
+  const [lastScope, setLastScope] = useState('');
   const [model, setModel] = useState<FieldModel>(
     new FieldModel(
       size,
@@ -53,14 +54,19 @@ const Game: FC = () => {
     field: context.field,
     target: model.mineCount,
     mask: [...context.mask],
-    callback: () => setStatus(Status.WIN),
+    callback: () => {
+      setStatus(Status.WIN);
+      if (status === Status.WIN) {
+        addLeaderToBoard({
+          nickname: localStorage.getItem('nickname')
+            ?? 'incognito',  scope: lastScope
+        });
+      };
+    },
   });
 
   const TimerCallback = (props?: Record<string, string | number>) => {
-    addLeaderToBoard({
-      nickname: localStorage.getItem('nickname')
-        ?? 'incognito',  scope: `${props?.time}`
-    });
+    setLastScope(`${props?.time}`);
   };
 
   const handleClick: (param: Coord) => () => void =

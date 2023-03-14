@@ -18,7 +18,7 @@ const Setting: FC = () => {
   const { nickname, changeDifficulty, changeNickname, setFullFildMod, setIsMuteSoundMod } = SapperStoreInstance;
   const [currentDifficulty, setCurrentDifficulty] = useState(config.difficultyRule[SapperStoreInstance.difficulty]);
   const [custom, setCustom] = useState(config.difficultyRule['custom']);
-  const [checked, setChecked] = useState(!!localStorage.getItem('fullFildMod') ?? false);
+  const [isFullFild, setIsFullFild] = useState(!!localStorage.getItem('fullFildMod') ?? false);
   const [isMuteSound, setIsMuteSound] = useState(!!localStorage.getItem('muteSound') ?? false);
   const { mineCount, size: { x = 3, y = 3 } } = currentDifficulty;
   const icon = ['♿', '🗡️', '⚔️', '✨'];
@@ -28,9 +28,9 @@ const Setting: FC = () => {
   }, [custom]);
 
   const setFullFild = () => {
-    setChecked(!checked);
-    setFullFildMod(checked);
-    localStorage.setItem('fullFildMod', `${checked ? checked : ''}`);
+    setIsFullFild(!isFullFild);
+    setFullFildMod(isFullFild);
+    localStorage.setItem('fullFildMod', `${isFullFild ? isFullFild : ''}`);
   };
 
   const setMuteSound = () => {
@@ -148,7 +148,7 @@ const Setting: FC = () => {
         className={createClass(['justify-between'])}
         reverse={true}
         title={<b>Полноразмерное поле:</b>}
-        value={checked}
+        value={isFullFild}
         sound={!SapperStoreInstance.isMuteSoundMod ? config.sound['button'] : ''}
         callback={setFullFild}
       />
