@@ -33,13 +33,33 @@ const Checkbox: FC<Props> = (props) => {
 
   return (
     <div className={createClass(['flex', className, reverse ? 'flex-row-reverse' : ''])}>
-      <input
-        className={createClass([ 'p-2', 'm-2'])}
-        onChange={handleClick}
-        placeholder={placeholder}
-        checked={checked}
-        type="checkbox"
-      />
+        <button
+          onClick={handleClick}
+          placeholder={placeholder}
+          className={createClass([
+            className,
+            checked ? 'bg-indigo-300' : 'bg-indigo-600',
+            'flex',
+            'w-10',
+            'h-5',
+            'rounded-full',
+            'transition-all',
+            'duration-500',
+          ])}
+        >
+          <span className={
+            createClass([
+              'h-5',
+              'w-5',
+              'bg-white',
+              'rounded-full',
+              'transition-all',
+              'duration-500',
+              'shadow-lg',
+              checked ? 'ml-5' : '',
+            ])
+          } />
+        </button>
       <label>{title}</label>
     </div>
   );

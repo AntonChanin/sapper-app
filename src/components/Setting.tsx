@@ -30,7 +30,7 @@ const Setting: FC = () => {
   const setFullFild = () => {
     setChecked(!checked);
     setFullFildMod(checked);
-    localStorage.setItem('muteSound', `${checked ? checked : ''}`);
+    localStorage.setItem('fullFildMod', `${checked ? checked : ''}`);
   };
 
   const setMuteSound = () => {
